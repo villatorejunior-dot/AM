@@ -1,0 +1,3604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#013A0F">
+    <title>AM Engenharia - Vistoria de Segurança</title>
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Favicons e Ícones PWA -->
+    <link rel="icon" type="image/jpeg" href="WhatsApp Image 2025-11-07 at 09.54.47.jpeg">
+    <link rel="apple-touch-icon" href="WhatsApp Image 2025-11-07 at 09.54.47.jpeg">
+    <link rel="apple-touch-icon" sizes="180x180" href="WhatsApp Image 2025-11-07 at 09.54.47.jpeg">
+    <link rel="apple-touch-icon" sizes="192x192" href="WhatsApp Image 2025-11-07 at 09.54.47.jpeg">
+    <link rel="apple-touch-icon" sizes="512x512" href="WhatsApp Image 2025-11-07 at 09.54.47.jpeg">
+    <meta name="apple-mobile-web-app-title" content="AM Vistoria">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-green: #013A0F;
+            --light-green: #02781E;
+            --yellow: #ffd700;
+            --bg-gray: #f5f5f5;
+            --border-gray: #ddd;
+            --text-dark: #333;
+            --danger-red: #dc3545;
+            --warning-orange: #ff8c00;
+            --success-green: #02781E;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-gray);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Form Styles */
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Button Styles */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 86, 49, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger-red);
+            color: white;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        /* Checklist Layout */
+        .checklist-layout {
+            display: flex;
+            gap: 0;
+            height: calc(100vh - 80px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 2px solid var(--border-gray);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .sidebar-item:hover {
+            background: var(--bg-gray);
+        }
+        
+        .sidebar-item.active {
+            background: var(--primary-green);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .sidebar-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--yellow);
+        }
+        
+        .sidebar-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-item-count {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .sidebar-item-progress {
+            margin-top: 8px;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .sidebar-item-progress-bar {
+            height: 100%;
+            background: var(--success-green);
+            transition: width 0.3s;
+        }
+        
+        .sidebar-item.active .sidebar-item-progress {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .sidebar-item.active .sidebar-item-progress-bar {
+            background: var(--yellow);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--bg-gray);
+        }
+        
+        .section-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+        
+        .section-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Checklist Items */
+        .checklist-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .checklist-card.checked {
+            border-left-color: var(--success-green);
+        }
+        
+        .checklist-card.non-compliant {
+            border-left-color: var(--danger-red);
+            background: #fff5f5;
+        }
+        
+        .checklist-item-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--success-green);
+        }
+        
+        .checklist-item-text {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .checklist-item-text strong {
+            color: var(--primary-green);
+        }
+        
+        /* Evaluation Buttons */
+        .evaluation-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .eval-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border-gray);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .eval-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .eval-btn.active {
+            border-color: var(--primary-green);
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        .eval-btn.conforme { border-color: var(--success-green); color: var(--success-green); }
+        .eval-btn.conforme.active { background: var(--success-green); border-color: var(--success-green); }
+        
+        .eval-btn.nc { border-color: var(--danger-red); color: var(--danger-red); }
+        .eval-btn.nc.active { background: var(--danger-red); border-color: var(--danger-red); }
+        
+        /* Observation Textarea */
+        .observation-area {
+            margin-bottom: 15px;
+        }
+        
+        .observation-area textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+        
+        /* Photo Section */
+        .photo-section {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        .btn-photo {
+            padding: 10px 18px;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .photo-preview {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .photo-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border-gray);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-delete {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--danger-red);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 1;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            z-index: 90;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .progress-bar-container {
+            height: 12px;
+            background: var(--border-gray);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+            transition: width 0.5s ease;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid var(--border-gray);
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Hidden File Input */
+        .file-input-hidden {
+            display: none;
+        }
+        
+        /* PDF Preview */
+        #pdfPreview {
+            width: 100%;
+            height: 500px;
+            border: none;
+            display: block;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .header-logo {
+                height: 35px;
+            }
+
+            #pdfPreview {
+                height: 400px;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 60px;
+                bottom: 0;
+                z-index: 150;
+                transition: left 0.3s;
+            }
+            
+            .sidebar.mobile-open {
+                left: 0;
+            }
+            
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 140;
+            }
+            
+            .mobile-overlay.active {
+                display: block;
+            }
+            
+            .menu-toggle {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                background: var(--primary-green);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                z-index: 95;
+            }
+            
+            .checklist-layout {
+                flex-direction: column;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .bottom-nav {
+                padding: 12px 15px;
+            }
+        }
+        
+        /* Report Styles */
+        .report-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .summary-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: var(--bg-gray);
+        }
+        
+        .summary-card-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .summary-card-label {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .success-value { color: var(--success-green); }
+        .danger-value { color: var(--danger-red); }
+        .warning-value { color: var(--warning-orange); }
+        
+        /* Critical Issues */
+        .critical-issues {
+            background: #fff5f5;
+            border: 2px solid var(--danger-red);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .critical-issues h3 {
+            color: var(--danger-red);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .critical-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--danger-red);
+        }
+
+        /* ════════════════════════════════════════════ */
+        /* NOVOS ESTILOS - SISTEMA DE EMPREENDIMENTOS */
+        /* ════════════════════════════════════════════ */
+
+        /* Menu Cards */
+        .menu-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(1, 58, 15, 0.2);
+            border-color: var(--primary-green);
+        }
+
+        .menu-card-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .menu-card h3 {
+            color: var(--primary-green);
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .menu-card p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .menu-card-badge {
+            display: inline-block;
+            background: var(--primary-green);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Screen Header */
+        .screen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .screen-header h2 {
+            color: var(--primary-green);
+            margin: 0;
+        }
+
+        .screen-header div {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Lista Container */
+        .lista-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .lista-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-green);
+            transition: all 0.2s ease;
+        }
+
+        .lista-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .lista-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .lista-item-titulo {
+            flex: 1;
+        }
+
+        .lista-item-titulo h3 {
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .lista-item-titulo p {
+            color: #666;
+            font-size: 14px;
+            margin: 2px 0;
+        }
+
+        .lista-item-acoes {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .lista-item-acoes .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 25px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9998;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-green);
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #e8f5e9;
+            border: 1px solid var(--success-green);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: var(--primary-green);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            color: #333;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        /* Badge de status */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Select customizado */
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        /* Animações */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .menu-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .screen-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .screen-header div {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .screen-header div .btn {
+                width: 100%;
+            }
+
+            .lista-item-header {
+                flex-direction: column;
+            }
+
+            .lista-item-acoes {
+                width: 100%;
+            }
+
+            .lista-item-acoes .btn {
+                flex: 1;
+            }
+
+            .modal {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>
+            <img src="WhatsApp Image 2025-11-07 at 09.54.47.jpeg" alt="AM Engenharia" class="header-logo">
+            AM Engenharia
+        </h1>
+        <div class="header-subtitle">Sistema de Vistoria de Segurança do Trabalho</div>
+    </div>
+
+    <!-- Screen 0: Menu Principal -->
+    <div class="screen active" id="screen-menu">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 style="color: var(--primary-green); margin-bottom: 10px;">Sistema de Vistoria</h1>
+                <p style="color: #666;">Selecione uma opção abaixo</p>
+            </div>
+
+            <div class="menu-cards">
+                <div class="menu-card" onclick="irParaEmpreendimentos()">
+                    <div class="menu-card-icon">🏢</div>
+                    <h3>Empreendimentos</h3>
+                    <p>Gerenciar cadastros de obras</p>
+                    <div class="menu-card-badge" id="badge-empreendimentos">0 obras</div>
+                </div>
+
+                <div class="menu-card" onclick="irParaNovaVistoria()">
+                    <div class="menu-card-icon">✏️</div>
+                    <h3>Nova Vistoria</h3>
+                    <p>Iniciar nova inspeção</p>
+                    <div class="menu-card-badge">Iniciar</div>
+                </div>
+
+                <div class="menu-card" onclick="irParaHistorico()">
+                    <div class="menu-card-icon">📋</div>
+                    <h3>Histórico</h3>
+                    <p>Vistorias anteriores</p>
+                    <div class="menu-card-badge" id="badge-vistorias">0 vistorias</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 1: Empreendimentos -->
+    <div class="screen" id="screen-empreendimentos">
+        <div class="container">
+            <div class="screen-header">
+                <h2>Gerenciar Empreendimentos</h2>
+                <div>
+                    <button class="btn btn-primary" onclick="novoEmpreendimento()">+ Novo Empreendimento</button>
+                    <button class="btn btn-secondary" onclick="voltarMenu()">← Voltar</button>
+                </div>
+            </div>
+
+            <div id="listaEmpreendimentos" class="lista-container">
+                <!-- Será preenchido por JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Nova Vistoria - Formulário Inicial -->
+    <div class="screen" id="screen-nova-vistoria">
+        <div class="container">
+            <div class="form-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h2 style="color: var(--primary-green); margin: 0;">Nova Vistoria</h2>
+                    <button class="btn btn-secondary" onclick="voltarMenu()">← Voltar ao Menu</button>
+                </div>
+
+                <!-- Seleção de Empreendimento -->
+                <div class="form-group">
+                    <label>Selecionar Empreendimento *</label>
+                    <select id="selectEmpreendimento" onchange="selecionarEmpreendimento(this.value)" required>
+                        <option value="">-- Selecione um empreendimento --</option>
+                        <!-- Será preenchido por JavaScript -->
+                    </select>
+                    <button class="btn btn-secondary" style="margin-top: 10px;" onclick="novoEmpreendimentoRapido()">
+                        + Cadastrar Novo Empreendimento
+                    </button>
+                </div>
+
+                <div id="infoEmpreendimentoSelecionado" style="display: none;">
+                    <!-- Info do empreendimento será mostrada aqui -->
+                </div>
+
+                <div id="formDadosEmpreendimento" style="display: none;">
+                    <h3 style="color: var(--primary-green); margin: 20px 0;">Dados do Empreendimento</h3>
+
+                    <div class="form-group">
+                        <label>Nome do Empreendimento</label>
+                        <input type="text" id="nomeEmpreendimento" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cliente/Construtor</label>
+                        <input type="text" id="nomeCliente" readonly>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Endereço</label>
+                            <input type="text" id="endereco" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Município</label>
+                            <input type="text" id="municipio" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bairro</label>
+                            <input type="text" id="bairro" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF/CNPJ</label>
+                            <input type="text" id="cpfCnpj" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="text" id="telefone" readonly>
+                    </div>
+
+                    <h3 style="color: var(--primary-green); margin: 30px 0 20px 0;">Dados da Vistoria</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Número da Visita *</label>
+                            <input type="number" id="numeroVisita" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="text" id="dataVisita" placeholder="DD/MM/AAAA">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hora de Início</label>
+                        <input type="text" id="horaInicio" placeholder="HH:MM">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Engenheiro Vistoriador *</label>
+                        <input type="text" id="engenheiroVistoriador" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Engenheiro Acompanhante</label>
+                        <input type="text" id="engenheiroAcompanhante">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Número de Trabalhadores no Dia *</label>
+                        <input type="number" id="numeroTrabalhadores" min="0" required>
+                    </div>
+
+                    <button class="btn btn-primary btn-block" onclick="iniciarVistoria()">
+                        Iniciar Vistoria →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Histórico -->
+    <div class="screen" id="screen-historico">
+        <div class="container">
+            <div class="screen-header">
+                <h2>Histórico de Vistorias</h2>
+                <div>
+                    <select id="filtroEmpreendimento" onchange="filtrarHistorico(this.value)" style="padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+                        <option value="">Todos os empreendimentos</option>
+                        <!-- Será preenchido por JavaScript -->
+                    </select>
+                    <button class="btn btn-secondary" onclick="voltarMenu()">← Voltar</button>
+                </div>
+            </div>
+
+            <div id="listaHistorico" class="lista-container">
+                <!-- Será preenchido por JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Checklist -->
+    <div class="screen" id="screen-checklist">
+        <div class="checklist-layout">
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content" id="mainContent">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="btn btn-secondary" onclick="voltarInicio()">
+                ← Voltar
+            </button>
+            <button class="btn btn-primary" onclick="finalizarVistoria()">
+                Finalizar Vistoria
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" onclick="toggleMobileMenu()" style="display: none;">
+            ☰
+        </button>
+        
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+    </div>
+
+    <!-- Screen 3: Report Summary -->
+    <div class="screen" id="screen-report">
+        <div class="container">
+            <div class="form-card">
+                <h2 style="margin-bottom: 20px; color: var(--primary-green);">Resumo da Vistoria</h2>
+
+                <div class="report-summary" id="reportSummary">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <div class="form-group">
+                    <label>Observações Finais</label>
+                    <textarea id="observacoesFinais" rows="4" placeholder="Observações adicionais sobre a vistoria..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button class="btn btn-secondary" onclick="voltarChecklist()">
+                        ← Voltar ao Checklist
+                    </button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="gerarRelatorio()">
+                        📄 Gerar o Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: Report Preview -->
+    <div class="screen" id="screen-report-preview">
+        <div class="container">
+            <div class="form-card">
+                <h2 style="margin-bottom: 20px; color: var(--primary-green);">Relatório Gerado</h2>
+
+                <div id="reportContent" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <!-- Summary info will be shown here -->
+                </div>
+
+                <!-- PDF Preview Section -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: var(--primary-green); margin-bottom: 10px; font-size: 16px;">📄 Pré-visualização do Relatório</h3>
+                    <div style="border: 2px solid var(--border-gray); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <iframe id="pdfPreview"></iframe>
+                    </div>
+                    <p style="font-size: 12px; color: #666; margin-top: 8px; text-align: center;">
+                        💡 Dica: Use os controles do visualizador para navegar, ampliar e visualizar todo o relatório
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="voltarSummary()">
+                        ← Voltar
+                    </button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="baixarPDF()">
+                        📥 Baixar PDF
+                    </button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="compartilharPDF()">
+                        📤 Compartilhar PDF
+                    </button>
+                </div>
+
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="btn btn-primary" onclick="voltarMenuComReset()">
+                        🏠 Voltar ao Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal" id="loadingModal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="spinner"></div>
+            <h3 id="loadingText">Gerando relatório...</h3>
+            <p style="color: #666; margin-top: 10px;">Por favor, aguarde</p>
+        </div>
+    </div>
+
+    <!-- Modal Empreendimento -->
+    <div class="modal-overlay" id="modalEmpreendimento">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalEmpreendimentoTitulo">Novo Empreendimento</h2>
+                <button class="modal-close" onclick="fecharModalEmpreendimento()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="formEmpreendimento" onsubmit="return false;">
+                    <input type="hidden" id="empreendimentoId">
+
+                    <div class="form-group">
+                        <label>Nome do Empreendimento</label>
+                        <input type="text" id="modalNomeEmpreendimento" placeholder="Ex: Residencial Jardins">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cliente/Construtor</label>
+                        <input type="text" id="modalNomeCliente" placeholder="Ex: Construtora ABC">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Endereço</label>
+                        <input type="text" id="modalEndereco" placeholder="Ex: Rua das Flores, 123">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Município</label>
+                            <input type="text" id="modalMunicipio" placeholder="Ex: São Paulo">
+                        </div>
+                        <div class="form-group">
+                            <label>Bairro</label>
+                            <input type="text" id="modalBairro" placeholder="Ex: Centro">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CPF/CNPJ</label>
+                            <input type="text" id="modalCpfCnpj" placeholder="Ex: 00.000.000/0000-00">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" id="modalTelefone" placeholder="Ex: (11) 9999-9999">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalEmpreendimento()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarEmpreendimentoModal()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        // Global Variables
+        let vistoriaData = {
+            info: {},
+            checklist: {},
+            startTime: null,
+            endTime: null
+        };
+
+        // Checklist Structure
+        const checklistStructure = {
+            "1": {
+                title: "SERVIÇOS EM EXECUÇÃO",
+                sections: {
+                    "1.1": {
+                        title: "Fundações e Contenções",
+                        items: [
+                            { text: "Escavações protegidas adequadamente", type: "conform" },
+                            { text: "Escoramento dimensionado e instalado", type: "conform" },
+                            { text: "Sinalização de áreas de risco", type: "rating" },
+                            { text: "Acesso seguro às escavações", type: "conform" },
+                            { text: "Drenagem adequada", type: "rating" }
+                        ]
+                    },
+                    "1.2": {
+                        title: "Estrutura (Concreto/Alvenaria)",
+                        items: [
+                            { text: "Proteção de bordas de lajes", type: "conform" },
+                            { text: "Telas de proteção instaladas", type: "rating" },
+                            { text: "Plataformas de trabalho adequadas", type: "conform" },
+                            { text: "Escadas provisórias em bom estado", type: "rating" },
+                            { text: "Vãos e aberturas protegidos", type: "conform" },
+                            { text: "Estoque de materiais organizado", type: "rating" }
+                        ]
+                    },
+                    "1.3": {
+                        title: "Trabalho em Altura (NR 35)",
+                        items: [
+                            { text: "Linha de vida instalada", type: "conform" },
+                            { text: "Pontos de ancoragem certificados", type: "conform" },
+                            { text: "Andaimes com guarda-corpo", type: "conform" },
+                            { text: "Uso de trava-quedas", type: "conform" },
+                            { text: "Sinalização de área isolada", type: "rating" }
+                        ]
+                    },
+                    "1.4": {
+                        title: "Máquinas e Equipamentos",
+                        items: [
+                            { text: "Betoneira com proteção", type: "conform" },
+                            { text: "Serra circular com coifa", type: "conform" },
+                            { text: "Equipamentos aterrados", type: "conform" },
+                            { text: "Estado de conservação", type: "rating" },
+                            { text: "Operadores habilitados", type: "conform" }
+                        ]
+                    },
+                    "1.5": {
+                        title: "Instalações Elétricas Provisórias",
+                        items: [
+                            { text: "Quadros elétricos com DR", type: "conform" },
+                            { text: "Fiação protegida", type: "rating" },
+                            { text: "Aterramento adequado", type: "conform" },
+                            { text: "Identificação de circuitos", type: "conform" },
+                            { text: "Iluminação adequada", type: "rating" }
+                        ]
+                    },
+                    "1.6": {
+                        title: "Elevador de Carga/Cremalheira",
+                        items: [
+                            { text: "Cabine fechada", type: "conform" },
+                            { text: "Portas guilhotina funcionando", type: "conform" },
+                            { text: "Manutenção em dia (ART)", type: "conform" },
+                            { text: "Operador treinado", type: "conform" },
+                            { text: "Sinalização de carga máxima", type: "conform" }
+                        ]
+                    }
+                }
+            },
+            "2": {
+                title: "ÁREAS DE VIVÊNCIA (NR 18)",
+                sections: {
+                    "2.1": {
+                        title: "Instalações Sanitárias",
+                        items: [
+                            { text: "Quantidade adequada de vasos", type: "conform" },
+                            { text: "Limpeza e higienização", type: "rating" },
+                            { text: "Chuveiros funcionando", type: "conform" },
+                            { text: "Ventilação adequada", type: "rating" },
+                            { text: "Papel higiênico e sabonete", type: "conform" },
+                            { text: "Coleta de lixo", type: "rating" }
+                        ]
+                    },
+                    "2.2": {
+                        title: "Vestiários",
+                        items: [
+                            { text: "Armários individuais", type: "conform" },
+                            { text: "Bancos em número adequado", type: "conform" },
+                            { text: "Limpeza e organização", type: "rating" },
+                            { text: "Área coberta", type: "conform" }
+                        ]
+                    },
+                    "2.3": {
+                        title: "Refeitório",
+                        items: [
+                            { text: "Mesas e bancos suficientes", type: "conform" },
+                            { text: "Bebedouro/água potável", type: "conform" },
+                            { text: "Aquecedor de marmitas", type: "conform" },
+                            { text: "Limpeza do ambiente", type: "rating" },
+                            { text: "Proteção contra intempéries", type: "conform" },
+                            { text: "Coleta seletiva de lixo", type: "rating" }
+                        ]
+                    },
+                    "2.4": {
+                        title: "Alojamento (se aplicável)",
+                        items: [
+                            { text: "Camas/beliches adequados", type: "rating" },
+                            { text: "Área mínima por trabalhador", type: "conform" },
+                            { text: "Ventilação e iluminação", type: "rating" },
+                            { text: "Roupas de cama limpas", type: "rating" }
+                        ]
+                    }
+                }
+            },
+            "3": {
+                title: "SEGURANÇA DO TRABALHO - CAMPO",
+                sections: {
+                    "3.1": {
+                        title: "EPIs (Equipamentos de Proteção Individual)",
+                        items: [
+                            { text: "Capacetes em uso", type: "rating" },
+                            { text: "Botinas de segurança", type: "rating" },
+                            { text: "Óculos de proteção (quando necessário)", type: "conform" },
+                            { text: "Luvas adequadas à atividade", type: "rating" },
+                            { text: "Protetor auricular (quando necessário)", type: "conform" },
+                            { text: "Máscaras/respiradores (quando necessário)", type: "conform" },
+                            { text: "Cinto de segurança tipo paraquedista (trabalho em altura)", type: "conform" },
+                            { text: "Estado de conservação dos EPIs", type: "rating" },
+                            { text: "CAs válidos e legíveis", type: "conform" }
+                        ]
+                    },
+                    "3.2": {
+                        title: "EPCs (Equipamentos de Proteção Coletiva)",
+                        items: [
+                            { text: "Guarda-corpo e rodapé", type: "conform" },
+                            { text: "Telas de proteção periféricas", type: "rating" },
+                            { text: "Plataformas de proteção (bandejas)", type: "conform" },
+                            { text: "Sinalização de segurança", type: "rating" },
+                            { text: "Fitas zebradas/cones", type: "rating" },
+                            { text: "Extintores (quantidade e validade)", type: "conform" },
+                            { text: "Tapumes e portões", type: "rating" }
+                        ]
+                    },
+                    "3.3": {
+                        title: "Sinalização",
+                        items: [
+                            { text: "Placas de segurança visíveis", type: "rating" },
+                            { text: "Sinalização de área de risco", type: "conform" },
+                            { text: "Identificação de saídas de emergência", type: "conform" },
+                            { text: "Faixas de delimitação", type: "rating" }
+                        ]
+                    },
+                    "3.4": {
+                        title: "Organização e Limpeza (5S)",
+                        items: [
+                            { text: "Canteiro organizado", type: "rating" },
+                            { text: "Materiais estocados adequadamente", type: "rating" },
+                            { text: "Lixo segregado e acondicionado", type: "rating" },
+                            { text: "Acessos desobstruídos", type: "conform" },
+                            { text: "Entulho recolhido", type: "rating" }
+                        ]
+                    },
+                    "3.5": {
+                        title: "Treinamentos e Capacitação",
+                        items: [
+                            { text: "Trabalhadores com integração", type: "conform" },
+                            { text: "DDS (Diálogo Diário de Segurança)", type: "conform" },
+                            { text: "Treinamento NR 35 (trabalho em altura)", type: "conform" },
+                            { text: "Treinamento NR 18 atualizado", type: "conform" },
+                            { text: "Operadores com cursos válidos", type: "conform" }
+                        ]
+                    }
+                }
+            },
+            "4": {
+                title: "SEGURANÇA DO TRABALHO - DOCUMENTAÇÃO",
+                sections: {
+                    "4.1": {
+                        title: "Documentos Obrigatórios",
+                        items: [
+                            { text: "PCMAT disponível e atualizado", type: "conform" },
+                            { text: "PPRA/PGR disponível", type: "conform" },
+                            { text: "LTCAT (se aplicável)", type: "conform" },
+                            { text: "Alvará de construção", type: "conform" },
+                            { text: "ART/TRT de segurança", type: "conform" },
+                            { text: "Ordem de serviço de segurança", type: "conform" }
+                        ]
+                    },
+                    "4.2": {
+                        title: "Registros de Treinamento",
+                        items: [
+                            { text: "Fichas de EPI assinadas", type: "conform" },
+                            { text: "Listas de presença em treinamentos", type: "conform" },
+                            { text: "Certificados de NR 35", type: "conform" },
+                            { text: "Certificados de NR 18", type: "conform" },
+                            { text: "Registro de DDS", type: "rating" }
+                        ]
+                    },
+                    "4.3": {
+                        title: "Laudos e Certificados",
+                        items: [
+                            { text: "Laudo de instalações elétricas", type: "conform" },
+                            { text: "ART de andaimes", type: "conform" },
+                            { text: "ART de cremalheira/elevador", type: "conform" },
+                            { text: "Certificados de EPIs (CAs)", type: "conform" },
+                            { text: "Manutenções de equipamentos em dia", type: "conform" }
+                        ]
+                    },
+                    "4.4": {
+                        title: "Organização Documental",
+                        items: [
+                            { text: "Documentos organizados e acessíveis", type: "rating" },
+                            { text: "Responsável técnico identificado", type: "conform" },
+                            { text: "Atualizações periódicas realizadas", type: "rating" }
+                        ]
+                    }
+                }
+            },
+            "5": {
+                title: "OUTROS",
+                sections: {
+                    "5.1": {
+                        title: "Meio Ambiente",
+                        items: [
+                            { text: "Controle de poeira", type: "rating" },
+                            { text: "Controle de ruído", type: "rating" },
+                            { text: "Gestão de resíduos", type: "rating" },
+                            { text: "Armazenamento de produtos químicos", type: "conform" },
+                            { text: "Proteção de áreas verdes (se aplicável)", type: "conform" }
+                        ]
+                    },
+                    "5.2": {
+                        title: "Vizinhança e Logística",
+                        items: [
+                            { text: "Impacto na vizinhança controlado", type: "rating" },
+                            { text: "Horários de trabalho respeitados", type: "conform" },
+                            { text: "Acesso de veículos controlado", type: "rating" },
+                            { text: "Sinalização externa adequada", type: "rating" }
+                        ]
+                    },
+                    "5.3": {
+                        title: "Gestão de Pessoas",
+                        items: [
+                            { text: "Presença de técnico de segurança", type: "conform" },
+                            { text: "Equipe dimensionada adequadamente", type: "rating" },
+                            { text: "Comunicação efetiva", type: "rating" }
+                        ]
+                    }
+                }
+            },
+            "6": {
+                title: "BONIFICAÇÕES/PENALIDADES",
+                sections: {
+                    "6.1": {
+                        title: "Pontos Positivos (Bonificações)",
+                        items: [
+                            { text: "Inovações em segurança implementadas", type: "description" },
+                            { text: "Canteiro modelo/referência", type: "description" },
+                            { text: "Zero acidentes no período", type: "description" },
+                            { text: "Iniciativas de conscientização", type: "description" },
+                            { text: "Uso de tecnologia para segurança", type: "description" },
+                            { text: "Cultura de segurança evidente", type: "description" }
+                        ]
+                    },
+                    "6.2": {
+                        title: "Não Conformidades Críticas (Penalidades)",
+                        items: [
+                            { text: "Trabalho em altura sem proteção - INTERDITAR", type: "critical" },
+                            { text: "Instalação elétrica irregular - ATENÇÃO", type: "critical" },
+                            { text: "Ausência de EPIs obrigatórios - ADVERTÊNCIA", type: "critical" },
+                            { text: "Equipamentos sem manutenção - ATENÇÃO", type: "critical" },
+                            { text: "PCMAT desatualizado/ausente - CRÍTICO", type: "critical" },
+                            { text: "Área de risco sem isolamento - INTERDITAR", type: "critical" },
+                            { text: "Reincidência de não conformidades - PENALIDADE", type: "critical" }
+                        ]
+                    }
+                }
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Set current date and time
+            const now = new Date();
+            document.getElementById('dataVisita').value = formatDate(now);
+            document.getElementById('horaInicio').value = formatTime(now);
+            
+            // Check mobile
+            if (window.innerWidth <= 768) {
+                document.querySelector('.menu-toggle').style.display = 'flex';
+            }
+            
+            // Initialize checklist data structure
+            initializeChecklistData();
+        }
+
+        function initializeChecklistData() {
+            for (let groupKey in checklistStructure) {
+                const group = checklistStructure[groupKey];
+                for (let sectionKey in group.sections) {
+                    const section = group.sections[sectionKey];
+                    section.items.forEach((item, index) => {
+                        const itemId = `${groupKey}.${sectionKey}.${index}`;
+                        vistoriaData.checklist[itemId] = {
+                            text: item.text,
+                            type: item.type,
+                            checked: false,
+                            evaluation: null,
+                            observation: '',
+                            photos: []
+                        };
+                    });
+                }
+            }
+        }
+
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function formatTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function iniciarVistoria() {
+            // Validate form
+            const requiredFields = [
+                'nomeEmpreendimento', 'numeroVisita', 'engenheiroVistoriador',
+                'empresaConstrutora', 'responsavelTecnico', 'matriculaCEI', 'numeroTrabalhadores'
+            ];
+            
+            for (let field of requiredFields) {
+                const input = document.getElementById(field);
+                if (!input.value.trim()) {
+                    alert('Por favor, preencha todos os campos obrigatórios!');
+                    input.focus();
+                    return;
+                }
+            }
+            
+            // Save initial data
+            vistoriaData.info = {
+                nomeEmpreendimento: document.getElementById('nomeEmpreendimento').value,
+                numeroVisita: document.getElementById('numeroVisita').value,
+                dataVisita: document.getElementById('dataVisita').value,
+                horaInicio: document.getElementById('horaInicio').value,
+                engenheiroVistoriador: document.getElementById('engenheiroVistoriador').value,
+                engenheiroAcompanhante: document.getElementById('engenheiroAcompanhante').value,
+                empresaConstrutora: document.getElementById('empresaConstrutora').value,
+                responsavelTecnico: document.getElementById('responsavelTecnico').value,
+                matriculaCEI: document.getElementById('matriculaCEI').value,
+                numeroTrabalhadores: document.getElementById('numeroTrabalhadores').value
+            };
+            
+            vistoriaData.startTime = new Date();
+            
+            // Build checklist interface
+            buildChecklistInterface();
+            
+            // Switch to checklist screen
+            switchScreen('screen-checklist');
+        }
+
+        function buildChecklistInterface() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.innerHTML = '';
+            mainContent.innerHTML = '';
+            
+            // Build sidebar
+            for (let groupKey in checklistStructure) {
+                const group = checklistStructure[groupKey];
+                const sidebarItem = document.createElement('div');
+                sidebarItem.className = 'sidebar-item';
+                sidebarItem.dataset.group = groupKey;
+                
+                const itemCount = Object.values(group.sections).reduce((sum, section) => sum + section.items.length, 0);
+                
+                sidebarItem.innerHTML = `
+                    <div class="sidebar-item-title">${groupKey}. ${group.title}</div>
+                    <div class="sidebar-item-count">0 / ${itemCount} itens</div>
+                    <div class="sidebar-item-progress">
+                        <div class="sidebar-item-progress-bar" style="width: 0%"></div>
+                    </div>
+                `;
+                
+                sidebarItem.onclick = () => showGroup(groupKey);
+                sidebar.appendChild(sidebarItem);
+            }
+            
+            // Show first group
+            showGroup('1');
+        }
+
+        function showGroup(groupKey) {
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-group="${groupKey}"]`).classList.add('active');
+            
+            // Build main content
+            const group = checklistStructure[groupKey];
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = '';
+            
+            // Section header
+            const header = document.createElement('div');
+            header.className = 'section-header';
+            header.innerHTML = `
+                <div class="section-title">${groupKey}. ${group.title}</div>
+                <div class="section-subtitle">Preencha todos os itens desta seção</div>
+            `;
+            mainContent.appendChild(header);
+            
+            // Progress
+            const progress = createProgressBar(groupKey);
+            mainContent.appendChild(progress);
+            
+            // Sections
+            for (let sectionKey in group.sections) {
+                const section = group.sections[sectionKey];
+                
+                const sectionHeader = document.createElement('div');
+                sectionHeader.style.cssText = 'margin: 25px 0 15px 0; font-size: 18px; font-weight: 700; color: var(--primary-green);';
+                sectionHeader.textContent = `${sectionKey} ${section.title}`;
+                mainContent.appendChild(sectionHeader);
+                
+                section.items.forEach((item, index) => {
+                    const itemId = `${groupKey}.${sectionKey}.${index}`;
+                    const card = createChecklistCard(itemId, item);
+                    mainContent.appendChild(card);
+                });
+            }
+        }
+
+        function createProgressBar(groupKey) {
+            const container = document.createElement('div');
+            container.className = 'progress-container';
+            container.id = `progress-${groupKey}`;
+            
+            const group = checklistStructure[groupKey];
+            const totalItems = Object.values(group.sections).reduce((sum, section) => sum + section.items.length, 0);
+            
+            container.innerHTML = `
+                <div class="progress-text">
+                    <span>Progresso</span>
+                    <span><strong class="progress-count">0</strong> / ${totalItems}</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+            `;
+            
+            return container;
+        }
+
+        function createChecklistCard(itemId, item) {
+            const card = document.createElement('div');
+            card.className = 'checklist-card';
+            card.id = `card-${itemId}`;
+            
+            const data = vistoriaData.checklist[itemId];
+            
+            let evaluationButtons = '';
+            if (item.type === 'conform') {
+                evaluationButtons = `
+                    <div class="evaluation-buttons">
+                        <button class="eval-btn conforme ${data.evaluation === 'Conforme' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'Conforme')">✓ Conforme</button>
+                        <button class="eval-btn nc ${data.evaluation === 'NC' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'NC')">✗ NC</button>
+                    </div>
+                `;
+            } else if (item.type === 'rating') {
+                evaluationButtons = `
+                    <div class="evaluation-buttons">
+                        <button class="eval-btn ${data.evaluation === 'MB' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'MB')">MB</button>
+                        <button class="eval-btn ${data.evaluation === 'B' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'B')">B</button>
+                        <button class="eval-btn ${data.evaluation === 'OK' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'OK')">OK</button>
+                        <button class="eval-btn ${data.evaluation === 'R' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'R')">R</button>
+                        <button class="eval-btn ${data.evaluation === 'MR' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'MR')">MR</button>
+                    </div>
+                `;
+            }
+            
+            card.innerHTML = `
+                <div class="checklist-item-header">
+                    <div class="checkbox-container">
+                        <input type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleCheck('${itemId}')">
+                    </div>
+                    <div class="checklist-item-text">
+                        <strong>${item.text}</strong>
+                    </div>
+                </div>
+                
+                ${evaluationButtons}
+                
+                <div class="observation-area">
+                    <textarea placeholder="Observações..." onchange="setObservation('${itemId}', this.value)">${data.observation}</textarea>
+                </div>
+                
+                <div class="photo-section">
+                    <input type="file" accept="image/*" capture="environment" class="file-input-hidden" id="file-${itemId}" onchange="addPhoto('${itemId}', this)">
+                    <button class="btn-photo" onclick="document.getElementById('file-${itemId}').click()">
+                        📷 Adicionar Foto
+                    </button>
+                    <div class="photo-preview" id="photos-${itemId}">
+                        ${data.photos.map((photo, i) => `
+                            <div class="photo-item">
+                                <img src="${photo}" alt="Foto">
+                                <button class="photo-delete" onclick="removePhoto('${itemId}', ${i})">×</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            if (data.checked) {
+                card.classList.add('checked');
+            }
+            if (data.evaluation === 'NC' || data.evaluation === 'MR') {
+                card.classList.add('non-compliant');
+            }
+            
+            return card;
+        }
+
+        function toggleCheck(itemId) {
+            const data = vistoriaData.checklist[itemId];
+            data.checked = !data.checked;
+            
+            const card = document.getElementById(`card-${itemId}`);
+            if (data.checked) {
+                card.classList.add('checked');
+            } else {
+                card.classList.remove('checked');
+            }
+            
+            updateProgress();
+        }
+
+        function setEvaluation(itemId, value) {
+            const data = vistoriaData.checklist[itemId];
+            data.evaluation = value;
+            data.checked = true;
+            
+            // Update UI
+            const card = document.getElementById(`card-${itemId}`);
+            card.classList.add('checked');
+            
+            // Update buttons
+            card.querySelectorAll('.eval-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Mark as non-compliant if needed
+            if (value === 'NC' || value === 'MR') {
+                card.classList.add('non-compliant');
+            } else {
+                card.classList.remove('non-compliant');
+            }
+            
+            // Update checkbox
+            card.querySelector('input[type="checkbox"]').checked = true;
+            
+            updateProgress();
+        }
+
+        function setObservation(itemId, value) {
+            vistoriaData.checklist[itemId].observation = value;
+        }
+
+        function addPhoto(itemId, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = vistoriaData.checklist[itemId];
+                data.photos.push(e.target.result);
+                
+                // Update photo preview
+                const photoPreview = document.getElementById(`photos-${itemId}`);
+                const photoIndex = data.photos.length - 1;
+                
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.innerHTML = `
+                    <img src="${e.target.result}" alt="Foto">
+                    <button class="photo-delete" onclick="removePhoto('${itemId}', ${photoIndex})">×</button>
+                `;
+                
+                photoPreview.appendChild(photoItem);
+                
+                // Clear input
+                input.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removePhoto(itemId, photoIndex) {
+            const data = vistoriaData.checklist[itemId];
+            data.photos.splice(photoIndex, 1);
+            
+            // Rebuild photo preview
+            const photoPreview = document.getElementById(`photos-${itemId}`);
+            photoPreview.innerHTML = data.photos.map((photo, i) => `
+                <div class="photo-item">
+                    <img src="${photo}" alt="Foto">
+                    <button class="photo-delete" onclick="removePhoto('${itemId}', ${i})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function updateProgress() {
+            // Update each group's progress
+            for (let groupKey in checklistStructure) {
+                const group = checklistStructure[groupKey];
+                let totalItems = 0;
+                let checkedItems = 0;
+                
+                for (let sectionKey in group.sections) {
+                    const section = group.sections[sectionKey];
+                    section.items.forEach((item, index) => {
+                        const itemId = `${groupKey}.${sectionKey}.${index}`;
+                        totalItems++;
+                        if (vistoriaData.checklist[itemId].checked) {
+                            checkedItems++;
+                        }
+                    });
+                }
+                
+                const percentage = totalItems > 0 ? (checkedItems / totalItems * 100) : 0;
+                
+                // Update sidebar
+                const sidebarItem = document.querySelector(`[data-group="${groupKey}"]`);
+                if (sidebarItem) {
+                    sidebarItem.querySelector('.sidebar-item-count').textContent = `${checkedItems} / ${totalItems} itens`;
+                    sidebarItem.querySelector('.sidebar-item-progress-bar').style.width = `${percentage}%`;
+                }
+                
+                // Update progress bar in main content
+                const progressBar = document.getElementById(`progress-${groupKey}`);
+                if (progressBar) {
+                    progressBar.querySelector('.progress-count').textContent = checkedItems;
+                    progressBar.querySelector('.progress-bar').style.width = `${percentage}%`;
+                }
+            }
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
+        function voltarInicio() {
+            if (confirm('Tem certeza que deseja voltar? Os dados não serão perdidos.')) {
+                switchScreen('screen-initial');
+            }
+        }
+
+        function voltarChecklist() {
+            switchScreen('screen-checklist');
+        }
+
+        function finalizarVistoria() {
+            vistoriaData.endTime = new Date();
+            
+            // Generate summary
+            generateSummary();
+            
+            switchScreen('screen-report');
+        }
+
+        function generateSummary() {
+            const summary = {
+                total: 0,
+                checked: 0,
+                conforme: 0,
+                naoConforme: 0,
+                critical: [],
+                byGroup: {}
+            };
+            
+            for (let itemId in vistoriaData.checklist) {
+                const data = vistoriaData.checklist[itemId];
+                summary.total++;
+                
+                if (data.checked) {
+                    summary.checked++;
+                }
+                
+                if (data.evaluation === 'Conforme' || ['MB', 'B', 'OK'].includes(data.evaluation)) {
+                    summary.conforme++;
+                } else if (data.evaluation === 'NC' || data.evaluation === 'MR') {
+                    summary.naoConforme++;
+                    
+                    // Check if critical
+                    if (data.text.includes('INTERDITAR') || data.text.includes('CRÍTICO')) {
+                        summary.critical.push({
+                            item: data.text,
+                            observation: data.observation,
+                            photos: data.photos
+                        });
+                    }
+                }
+                
+                // By group
+                const groupKey = itemId.split('.')[0];
+                if (!summary.byGroup[groupKey]) {
+                    summary.byGroup[groupKey] = { total: 0, checked: 0, conforme: 0 };
+                }
+                summary.byGroup[groupKey].total++;
+                if (data.checked) summary.byGroup[groupKey].checked++;
+                if (data.evaluation === 'Conforme' || ['MB', 'B', 'OK'].includes(data.evaluation)) {
+                    summary.byGroup[groupKey].conforme++;
+                }
+            }
+            
+            // Display summary
+            const summaryDiv = document.getElementById('reportSummary');
+            const conformityPercentage = summary.checked > 0 ? ((summary.conforme / summary.checked) * 100).toFixed(1) : 0;
+            
+            let criticalHTML = '';
+            if (summary.critical.length > 0) {
+                criticalHTML = `
+                    <div class="critical-issues">
+                        <h3>⚠️ Não Conformidades Críticas (${summary.critical.length})</h3>
+                        ${summary.critical.map(item => `
+                            <div class="critical-item">
+                                <strong>${item.item}</strong>
+                                ${item.observation ? `<p style="margin-top: 8px;">${item.observation}</p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            summaryDiv.innerHTML = `
+                <h3 style="margin-bottom: 15px;">Resumo da Vistoria</h3>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-card-value">${summary.checked}</div>
+                        <div class="summary-card-label">Itens Verificados</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-value success-value">${summary.conforme}</div>
+                        <div class="summary-card-label">Conformes</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-value danger-value">${summary.naoConforme}</div>
+                        <div class="summary-card-label">Não Conformes</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-value ${conformityPercentage >= 80 ? 'success-value' : conformityPercentage >= 60 ? 'warning-value' : 'danger-value'}">${conformityPercentage}%</div>
+                        <div class="summary-card-label">Conformidade</div>
+                    </div>
+                </div>
+                ${criticalHTML}
+            `;
+            
+            vistoriaData.summary = summary;
+        }
+
+        let generatedPdfBlob = null;
+
+        async function gerarRelatorio() {
+            const observacoesFinais = document.getElementById('observacoesFinais').value;
+            vistoriaData.observacoesFinais = observacoesFinais;
+
+            // Salvar vistoria no LocalStorage
+            const resumo = calcularConformidade(vistoriaData.checklist);
+
+            const vistoriaParaSalvar = {
+                id: vistoriaAtualId,
+                empreendimentoId: vistoriaData.empreendimentoId || empreendimentoSelecionado?.id,
+                numeroVistoria: parseInt(vistoriaData.info.numeroVisita),
+                data: vistoriaData.info.dataVisita,
+                horaInicio: vistoriaData.info.horaInicio,
+                horaFim: formatTime(new Date()),
+                engenheiroVistoriador: vistoriaData.info.engenheiroVistoriador,
+                engenheiroAcompanhante: vistoriaData.info.engenheiroAcompanhante,
+                numeroTrabalhadores: parseInt(vistoriaData.info.numeroTrabalhadores),
+                checklist: vistoriaData.checklist,
+                resumo: resumo,
+                observacoesFinais: observacoesFinais
+            };
+
+            // Salvar no LocalStorage
+            salvarVistoria(vistoriaParaSalvar);
+
+            showLoading('Gerando relatório PDF...');
+
+            // Generate PDF
+            setTimeout(async () => {
+                try {
+                    await generatePDF();
+                    hideLoading();
+                    switchScreen('screen-report-preview');
+                } catch (error) {
+                    hideLoading();
+                    alert('Erro ao gerar relatório: ' + error.message);
+                }
+            }, 500);
+        }
+
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            let yPos = 20;
+
+            // Header
+            pdf.setFillColor(1, 58, 15);
+            pdf.rect(0, 0, pageWidth, 40, 'F');
+
+            // Add logo
+            try {
+                const logoImg = document.querySelector('.header-logo');
+                if (logoImg) {
+                    // Esperar a imagem carregar se necessário
+                    if (!logoImg.complete) {
+                        await new Promise(resolve => {
+                            logoImg.onload = resolve;
+                            logoImg.onerror = resolve;
+                        });
+                    }
+
+                    if (logoImg.complete && logoImg.naturalHeight !== 0) {
+                        // Converter imagem para base64 usando canvas
+                        const canvas = document.createElement('canvas');
+                        canvas.width = logoImg.naturalWidth;
+                        canvas.height = logoImg.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(logoImg, 0, 0);
+                        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+                        // Adicionar imagem ao PDF
+                        pdf.addImage(imgData, 'JPEG', margin, 8, 25, 25);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar logo:', error);
+            }
+
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(20);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('AM ENGENHARIA', margin + 30, 15);
+
+            pdf.setFontSize(12);
+            pdf.setFont(undefined, 'normal');
+            pdf.text('Relatório de Vistoria de Segurança do Trabalho', margin + 30, 25);
+
+            yPos = 50;
+            pdf.setTextColor(0, 0, 0);
+
+            // Informações da Vistoria
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('INFORMAÇÕES DA VISTORIA', margin, yPos);
+            yPos += 10;
+
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            const info = vistoriaData.info;
+
+            pdf.text(`Empreendimento: ${info.nomeEmpreendimento}`, margin, yPos);
+            yPos += 6;
+            pdf.text(`Visita Nº: ${info.numeroVisita}`, margin, yPos);
+            pdf.text(`Data: ${info.dataVisita}`, margin + 80, yPos);
+            yPos += 6;
+            pdf.text(`Hora Início: ${info.horaInicio}`, margin, yPos);
+            if (vistoriaData.endTime) {
+                pdf.text(`Hora Término: ${formatTime(vistoriaData.endTime)}`, margin + 80, yPos);
+            }
+            yPos += 6;
+            pdf.text(`Engenheiro Vistoriador: ${info.engenheiroVistoriador}`, margin, yPos);
+            yPos += 6;
+            if (info.engenheiroAcompanhante) {
+                pdf.text(`Engenheiro Acompanhante: ${info.engenheiroAcompanhante}`, margin, yPos);
+                yPos += 6;
+            }
+            pdf.text(`Empresa Construtora: ${info.empresaConstrutora}`, margin, yPos);
+            yPos += 6;
+            pdf.text(`Responsável Técnico: ${info.responsavelTecnico}`, margin, yPos);
+            yPos += 6;
+            pdf.text(`Matrícula CEI/CNPJ: ${info.matriculaCEI}`, margin, yPos);
+            yPos += 6;
+            pdf.text(`Trabalhadores no Dia: ${info.numeroTrabalhadores}`, margin, yPos);
+            yPos += 10;
+
+            // Resumo
+            const summary = vistoriaData.summary;
+            const conformityPercentage = summary.checked > 0 ? ((summary.conforme / summary.checked) * 100).toFixed(1) : 0;
+
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('RESUMO DA VISTORIA', margin, yPos);
+            yPos += 10;
+
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            pdf.text(`Total de Itens Verificados: ${summary.checked}`, margin, yPos);
+            yPos += 6;
+
+            pdf.setTextColor(2, 120, 30);
+            pdf.text(`Conformes: ${summary.conforme}`, margin, yPos);
+            pdf.setTextColor(0, 0, 0);
+
+            pdf.setTextColor(220, 53, 69);
+            pdf.text(`Não Conformes: ${summary.naoConforme}`, margin + 80, yPos);
+            pdf.setTextColor(0, 0, 0);
+            yPos += 6;
+
+            const conformityColor = conformityPercentage >= 80 ? [2, 120, 30] : conformityPercentage >= 60 ? [255, 140, 0] : [220, 53, 69];
+            pdf.setTextColor(...conformityColor);
+            pdf.setFont(undefined, 'bold');
+            pdf.text(`Taxa de Conformidade: ${conformityPercentage}%`, margin, yPos);
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFont(undefined, 'normal');
+            yPos += 10;
+
+            // Não Conformidades Críticas
+            if (summary.critical.length > 0) {
+                if (yPos > pageHeight - 60) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFillColor(255, 245, 245);
+                pdf.rect(margin - 5, yPos - 5, pageWidth - 2 * margin + 10, 10, 'F');
+
+                pdf.setTextColor(220, 53, 69);
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(`⚠ NÃO CONFORMIDADES CRÍTICAS (${summary.critical.length})`, margin, yPos);
+                pdf.setTextColor(0, 0, 0);
+                yPos += 8;
+
+                pdf.setFontSize(9);
+                pdf.setFont(undefined, 'normal');
+                summary.critical.forEach((item, index) => {
+                    if (yPos > pageHeight - 30) {
+                        pdf.addPage();
+                        yPos = 20;
+                    }
+
+                    pdf.setFont(undefined, 'bold');
+                    const lines = pdf.splitTextToSize(`${index + 1}. ${item.item}`, pageWidth - 2 * margin);
+                    pdf.text(lines, margin, yPos);
+                    yPos += lines.length * 5;
+
+                    if (item.observation) {
+                        pdf.setFont(undefined, 'normal');
+                        const obsLines = pdf.splitTextToSize(`Obs: ${item.observation}`, pageWidth - 2 * margin - 5);
+                        pdf.text(obsLines, margin + 5, yPos);
+                        yPos += obsLines.length * 5;
+                    }
+                    yPos += 3;
+                });
+                yPos += 5;
+            }
+
+            // Observações Finais
+            if (vistoriaData.observacoesFinais) {
+                if (yPos > pageHeight - 40) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('OBSERVAÇÕES FINAIS', margin, yPos);
+                yPos += 8;
+
+                pdf.setFontSize(10);
+                pdf.setFont(undefined, 'normal');
+                const obsLines = pdf.splitTextToSize(vistoriaData.observacoesFinais, pageWidth - 2 * margin);
+                pdf.text(obsLines, margin, yPos);
+                yPos += obsLines.length * 5 + 10;
+            }
+
+            // Detalhamento Completo dos Itens Verificados (nova página)
+            pdf.addPage();
+            yPos = 20;
+
+            pdf.setFontSize(16);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('DETALHAMENTO DOS ITENS VERIFICADOS', margin, yPos);
+            yPos += 12;
+
+            // Contadores para numeração sequencial
+            let groupCounter = 0;
+
+            // Iterar por cada grupo
+            for (let groupKey in checklistStructure) {
+                const group = checklistStructure[groupKey];
+
+                // Verificar se o grupo tem algum item verificado
+                let groupHasCheckedItems = false;
+                for (let sectionKey in group.sections) {
+                    const section = group.sections[sectionKey];
+                    for (let index = 0; index < section.items.length; index++) {
+                        const itemId = `${groupKey}.${sectionKey}.${index}`;
+                        if (vistoriaData.checklist[itemId].checked) {
+                            groupHasCheckedItems = true;
+                            break;
+                        }
+                    }
+                    if (groupHasCheckedItems) break;
+                }
+
+                // Só mostrar o grupo se tiver itens verificados
+                if (!groupHasCheckedItems) continue;
+
+                // Incrementar contador do grupo
+                groupCounter++;
+
+                // Verificar se há espaço suficiente para o título do grupo
+                if (yPos > pageHeight - 40) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                // Título do Grupo (com numeração sequencial)
+                pdf.setFillColor(1, 58, 15);
+                pdf.rect(margin - 5, yPos - 6, pageWidth - 2 * margin + 10, 10, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(`${groupCounter}. ${group.title}`, margin, yPos);
+                pdf.setTextColor(0, 0, 0);
+                yPos += 12;
+
+                // Contador para seções dentro do grupo
+                let sectionCounter = 0;
+
+                // Iterar por cada seção
+                for (let sectionKey in group.sections) {
+                    const section = group.sections[sectionKey];
+
+                    // Verificar se a seção tem algum item verificado
+                    let sectionHasCheckedItems = false;
+                    for (let index = 0; index < section.items.length; index++) {
+                        const itemId = `${groupKey}.${sectionKey}.${index}`;
+                        if (vistoriaData.checklist[itemId].checked) {
+                            sectionHasCheckedItems = true;
+                            break;
+                        }
+                    }
+
+                    // Só mostrar a seção se tiver itens verificados
+                    if (!sectionHasCheckedItems) continue;
+
+                    // Incrementar contador da seção
+                    sectionCounter++;
+
+                    // Verificar se há espaço para o título da seção
+                    if (yPos > pageHeight - 30) {
+                        pdf.addPage();
+                        yPos = 20;
+                    }
+
+                    // Título da Seção (com numeração sequencial)
+                    pdf.setFontSize(11);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setTextColor(2, 120, 30);
+                    pdf.text(`${groupCounter}.${sectionCounter} ${section.title}`, margin, yPos);
+                    pdf.setTextColor(0, 0, 0);
+                    yPos += 8;
+
+                    // Iterar por cada item
+                    section.items.forEach((item, index) => {
+                        const itemId = `${groupKey}.${sectionKey}.${index}`;
+                        const itemData = vistoriaData.checklist[itemId];
+
+                        // Só incluir itens que foram verificados
+                        if (itemData.checked) {
+                            // Verificar espaço disponível
+                            if (yPos > pageHeight - 40) {
+                                pdf.addPage();
+                                yPos = 20;
+                            }
+
+                            // Desenhar borda do item
+                            const itemStartY = yPos - 3;
+                            pdf.setDrawColor(220, 220, 220);
+                            pdf.setLineWidth(0.5);
+
+                            // Texto do Item
+                            pdf.setFontSize(9);
+                            pdf.setFont(undefined, 'bold');
+                            const itemLines = pdf.splitTextToSize(`• ${itemData.text}`, pageWidth - 2 * margin - 10);
+                            pdf.text(itemLines, margin + 3, yPos);
+                            yPos += itemLines.length * 4.5;
+
+                            // Avaliação
+                            if (itemData.evaluation) {
+                                pdf.setFont(undefined, 'normal');
+                                let evalText = `Avaliação: ${itemData.evaluation}`;
+                                let evalColor = [0, 0, 0];
+
+                                // Definir cor baseada na avaliação
+                                if (itemData.evaluation === 'Conforme' || ['MB', 'B', 'OK'].includes(itemData.evaluation)) {
+                                    evalColor = [2, 120, 30];
+                                    evalText += ' ✓';
+                                } else if (itemData.evaluation === 'NC' || ['R', 'MR'].includes(itemData.evaluation)) {
+                                    evalColor = [220, 53, 69];
+                                    evalText += ' ✗';
+                                }
+
+                                pdf.setTextColor(...evalColor);
+                                pdf.text(evalText, margin + 3, yPos);
+                                pdf.setTextColor(0, 0, 0);
+                                yPos += 5;
+                            }
+
+                            // Observação
+                            if (itemData.observation && itemData.observation.trim()) {
+                                pdf.setFont(undefined, 'italic');
+                                pdf.setFontSize(8);
+                                const obsLines = pdf.splitTextToSize(`Obs: ${itemData.observation}`, pageWidth - 2 * margin - 10);
+                                pdf.text(obsLines, margin + 3, yPos);
+                                yPos += obsLines.length * 4;
+                                pdf.setFontSize(9);
+                                pdf.setFont(undefined, 'normal');
+                            }
+
+                            // Fotos
+                            if (itemData.photos && itemData.photos.length > 0) {
+                                yPos += 2;
+                                pdf.setFontSize(8);
+                                pdf.text(`Fotos anexadas: ${itemData.photos.length}`, margin + 3, yPos);
+                                yPos += 5;
+
+                                // Adicionar miniaturas das fotos (opcional, pode aumentar muito o tamanho do PDF)
+                                for (let i = 0; i < Math.min(itemData.photos.length, 2); i++) {
+                                    if (yPos > pageHeight - 50) {
+                                        pdf.addPage();
+                                        yPos = 20;
+                                    }
+
+                                    try {
+                                        const photo = itemData.photos[i];
+                                        const imgWidth = 40;
+                                        const imgHeight = 30;
+                                        pdf.addImage(photo, 'JPEG', margin + 3 + (i * 45), yPos, imgWidth, imgHeight);
+                                    } catch (error) {
+                                        console.error('Erro ao adicionar foto:', error);
+                                    }
+                                }
+
+                                if (itemData.photos.length > 0) {
+                                    yPos += 32;
+                                }
+                            }
+
+                            // Desenhar borda do item
+                            const itemHeight = yPos - itemStartY + 2;
+                            pdf.rect(margin, itemStartY, pageWidth - 2 * margin, itemHeight);
+
+                            yPos += 5;
+                        }
+                    });
+
+                    yPos += 3;
+                }
+
+                yPos += 5;
+            }
+
+            // Footer
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(8);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text(`Gerado em ${formatDate(new Date())} às ${formatTime(new Date())}`, margin, pageHeight - 10);
+                pdf.text(`Página ${i} de ${pageCount}`, pageWidth - margin - 20, pageHeight - 10);
+            }
+
+            // Generate blob and preview
+            generatedPdfBlob = pdf.output('blob');
+
+            // Create blob URL for PDF preview
+            const pdfUrl = URL.createObjectURL(generatedPdfBlob);
+
+            // Display summary info
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">✅</div>
+                    <h3 style="color: var(--primary-green); margin-bottom: 10px;">Relatório PDF Gerado com Sucesso!</h3>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        <strong>Empreendimento:</strong> ${info.nomeEmpreendimento}<br>
+                        <strong>Data:</strong> ${info.dataVisita}<br>
+                        <strong>Taxa de Conformidade:</strong> <span style="color: ${conformityPercentage >= 80 ? 'var(--success-green)' : conformityPercentage >= 60 ? 'var(--warning-orange)' : 'var(--danger-red)'}; font-weight: bold;">${conformityPercentage}%</span>
+                    </p>
+                    <div style="background: var(--bg-gray); padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <p style="margin: 0; color: #666;">
+                            ✓ ${summary.checked} itens verificados<br>
+                            ✓ ${summary.conforme} conformes<br>
+                            ${summary.naoConforme > 0 ? `✗ ${summary.naoConforme} não conformes` : ''}
+                            ${summary.critical.length > 0 ? `<br>⚠ ${summary.critical.length} não conformidades críticas` : ''}
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            // Load PDF in iframe preview
+            const pdfPreview = document.getElementById('pdfPreview');
+            pdfPreview.src = pdfUrl;
+
+            // Store URL for cleanup later
+            window.currentPdfUrl = pdfUrl;
+        }
+
+        function voltarSummary() {
+            // Clean up blob URL
+            if (window.currentPdfUrl) {
+                URL.revokeObjectURL(window.currentPdfUrl);
+                window.currentPdfUrl = null;
+            }
+            switchScreen('screen-report');
+        }
+
+        async function baixarPDF() {
+            if (!generatedPdfBlob) {
+                alert('Nenhum relatório foi gerado ainda.');
+                return;
+            }
+
+            const fileName = `Vistoria_${vistoriaData.info.nomeEmpreendimento.replace(/\s+/g, '_')}_${vistoriaData.info.dataVisita.replace(/\//g, '-')}.pdf`;
+
+            // Create download link
+            const url = URL.createObjectURL(generatedPdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('Download do PDF iniciado!');
+        }
+
+        async function compartilharPDF() {
+            if (!generatedPdfBlob) {
+                alert('Nenhum relatório foi gerado ainda.');
+                return;
+            }
+
+            const fileName = `Vistoria_${vistoriaData.info.nomeEmpreendimento.replace(/\s+/g, '_')}_${vistoriaData.info.dataVisita.replace(/\//g, '-')}.pdf`;
+
+            // Check if Web Share API is available
+            if (navigator.share) {
+                try {
+                    const file = new File([generatedPdfBlob], fileName, { type: 'application/pdf' });
+                    await navigator.share({
+                        title: 'Relatório de Vistoria',
+                        text: `Relatório de Vistoria - ${vistoriaData.info.nomeEmpreendimento}`,
+                        files: [file]
+                    });
+                    alert('Relatório compartilhado com sucesso!');
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        alert('Erro ao compartilhar: ' + error.message);
+                    }
+                }
+            } else {
+                // Fallback: download the file
+                alert('Compartilhamento não disponível neste dispositivo. O arquivo será baixado.');
+                baixarPDF();
+            }
+        }
+
+        function novaVistoria() {
+            if (confirm('Deseja iniciar uma nova vistoria? Todos os dados atuais serão perdidos.')) {
+                // Clean up blob URL
+                if (window.currentPdfUrl) {
+                    URL.revokeObjectURL(window.currentPdfUrl);
+                    window.currentPdfUrl = null;
+                }
+                resetApp();
+                switchScreen('screen-initial');
+            }
+        }
+
+        function showLoading(text) {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingModal').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingModal').classList.remove('active');
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function resetApp() {
+            // Clear all data
+            vistoriaData = {
+                info: {},
+                checklist: {},
+                startTime: null,
+                endTime: null
+            };
+
+            // Re-initialize
+            initializeChecklistData();
+
+            // Clear form fields
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
+                if (!input.readOnly) {
+                    input.value = '';
+                }
+            });
+
+            // Reset date and time
+            const now = new Date();
+            document.getElementById('dataVisita').value = formatDate(now);
+            document.getElementById('horaInicio').value = formatTime(now);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // PARTE 1: SISTEMA DE ARMAZENAMENTO (LocalStorage)
+        // ═══════════════════════════════════════════════════════════════
+
+        // Funções de LocalStorage
+        function salvarNoLocalStorage(chave, dados) {
+            try {
+                localStorage.setItem(chave, JSON.stringify(dados));
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar no LocalStorage:', error);
+                mostrarToast('Erro ao salvar dados', 'error');
+                return false;
+            }
+        }
+
+        function obterDoLocalStorage(chave) {
+            try {
+                const dados = localStorage.getItem(chave);
+                return dados ? JSON.parse(dados) : null;
+            } catch (error) {
+                console.error('Erro ao obter do LocalStorage:', error);
+                return null;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // GERENCIAMENTO DE EMPREENDIMENTOS
+        // ═══════════════════════════════════════════════════════════════
+
+        function salvarEmpreendimento(dados) {
+            const empreendimentos = obterDoLocalStorage('am-empreendimentos') || [];
+
+            if (dados.id) {
+                // Atualizar existente
+                const index = empreendimentos.findIndex(e => e.id === dados.id);
+                if (index !== -1) {
+                    empreendimentos[index] = { ...empreendimentos[index], ...dados };
+                }
+            } else {
+                // Novo empreendimento
+                dados.id = 'emp_' + Date.now();
+                dados.dataCadastro = new Date().toISOString();
+                dados.totalVistorias = 0;
+                dados.ultimaVistoria = null;
+                empreendimentos.push(dados);
+            }
+
+            salvarNoLocalStorage('am-empreendimentos', empreendimentos);
+            mostrarToast('Empreendimento salvo com sucesso!', 'success');
+            return dados.id;
+        }
+
+        function listarEmpreendimentos() {
+            return obterDoLocalStorage('am-empreendimentos') || [];
+        }
+
+        function buscarEmpreendimento(id) {
+            const empreendimentos = listarEmpreendimentos();
+            return empreendimentos.find(e => e.id === id);
+        }
+
+        function atualizarEmpreendimento(id, dados) {
+            dados.id = id;
+            return salvarEmpreendimento(dados);
+        }
+
+        function excluirEmpreendimento(id) {
+            const empreendimentos = listarEmpreendimentos();
+            const novosEmpreendimentos = empreendimentos.filter(e => e.id !== id);
+
+            // Também excluir todas as vistorias deste empreendimento
+            const vistorias = listarVistorias();
+            const novasVistorias = vistorias.filter(v => v.empreendimentoId !== id);
+
+            salvarNoLocalStorage('am-empreendimentos', novosEmpreendimentos);
+            salvarNoLocalStorage('am-vistorias', novasVistorias);
+
+            mostrarToast('Empreendimento excluído com sucesso!', 'success');
+            return true;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // GERENCIAMENTO DE VISTORIAS
+        // ═══════════════════════════════════════════════════════════════
+
+        function salvarVistoria(dados) {
+            const vistorias = obterDoLocalStorage('am-vistorias') || [];
+
+            if (!dados.id) {
+                dados.id = 'vis_' + Date.now();
+            }
+
+            // Atualizar ou adicionar
+            const index = vistorias.findIndex(v => v.id === dados.id);
+            if (index !== -1) {
+                vistorias[index] = dados;
+            } else {
+                vistorias.push(dados);
+            }
+
+            salvarNoLocalStorage('am-vistorias', vistorias);
+
+            // Atualizar dados do empreendimento
+            const empreendimento = buscarEmpreendimento(dados.empreendimentoId);
+            if (empreendimento) {
+                empreendimento.totalVistorias = vistorias.filter(v => v.empreendimentoId === dados.empreendimentoId).length;
+                empreendimento.ultimaVistoria = dados.data;
+                atualizarEmpreendimento(empreendimento.id, empreendimento);
+            }
+
+            mostrarToast('Vistoria salva com sucesso!', 'success');
+            return dados.id;
+        }
+
+        function listarVistorias(empreendimentoId = null) {
+            const vistorias = obterDoLocalStorage('am-vistorias') || [];
+            if (empreendimentoId) {
+                return vistorias.filter(v => v.empreendimentoId === empreendimentoId);
+            }
+            return vistorias;
+        }
+
+        function buscarVistoria(id) {
+            const vistorias = listarVistorias();
+            return vistorias.find(v => v.id === id);
+        }
+
+        function buscarUltimaVistoria(empreendimentoId) {
+            const vistorias = listarVistorias(empreendimentoId);
+            if (vistorias.length === 0) return null;
+
+            // Ordenar por número de vistoria (decrescente)
+            vistorias.sort((a, b) => b.numeroVistoria - a.numeroVistoria);
+            return vistorias[0];
+        }
+
+        function excluirVistoria(id) {
+            const vistorias = listarVistorias();
+            const novasVistorias = vistorias.filter(v => v.id !== id);
+
+            salvarNoLocalStorage('am-vistorias', novasVistorias);
+            mostrarToast('Vistoria excluída com sucesso!', 'success');
+            return true;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SISTEMA DE COMPARAÇÃO
+        // ═══════════════════════════════════════════════════════════════
+
+        function compararVistorias(vistoriaAtual, vistoriaAnterior) {
+            const comparacao = {
+                melhorias: [],
+                reincidencias: [],
+                novosNCs: [],
+                conformes: []
+            };
+
+            if (!vistoriaAnterior) return comparacao;
+
+            const checklistAtual = vistoriaAtual.checklist;
+            const checklistAnterior = vistoriaAnterior.checklist;
+
+            for (let itemId in checklistAtual) {
+                const itemAtual = checklistAtual[itemId];
+                const itemAnterior = checklistAnterior[itemId];
+
+                if (!itemAtual.checked) continue;
+
+                const avalAtual = itemAtual.evaluation || '';
+                const avalAnterior = itemAnterior ? (itemAnterior.evaluation || '') : '';
+
+                const isConformeAtual = avalAtual === 'Conforme' || ['MB', 'B', 'OK'].includes(avalAtual);
+                const isConformeAnterior = avalAnterior === 'Conforme' || ['MB', 'B', 'OK'].includes(avalAnterior);
+                const isNCAtual = avalAtual === 'NC' || ['R', 'MR'].includes(avalAtual);
+                const isNCAnterior = avalAnterior === 'NC' || ['R', 'MR'].includes(avalAnterior);
+
+                if (isNCAnterior && isConformeAtual) {
+                    // Item foi corrigido
+                    comparacao.melhorias.push({
+                        itemId,
+                        itemAtual,
+                        itemAnterior
+                    });
+                } else if (isNCAnterior && isNCAtual) {
+                    // Item continua NC (reincidente)
+                    comparacao.reincidencias.push({
+                        itemId,
+                        itemAtual,
+                        itemAnterior
+                    });
+                } else if (isConformeAnterior && isNCAtual) {
+                    // Novo NC
+                    comparacao.novosNCs.push({
+                        itemId,
+                        itemAtual,
+                        itemAnterior
+                    });
+                } else if (isConformeAtual) {
+                    // Continua conforme
+                    comparacao.conformes.push({
+                        itemId,
+                        itemAtual
+                    });
+                }
+            }
+
+            return comparacao;
+        }
+
+        function identificarPendencias(vistoria) {
+            const pendencias = [];
+            const checklist = vistoria.checklist;
+
+            for (let itemId in checklist) {
+                const item = checklist[itemId];
+                if (!item.checked) continue;
+
+                const aval = item.evaluation || '';
+                const isNC = aval === 'NC' || ['R', 'MR'].includes(aval);
+
+                if (isNC) {
+                    pendencias.push({
+                        itemId,
+                        item
+                    });
+                }
+            }
+
+            return pendencias;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // UTILITÁRIOS
+        // ═══════════════════════════════════════════════════════════════
+
+        function calcularConformidade(checklist) {
+            let total = 0;
+            let conformes = 0;
+            let naoConformes = 0;
+            let criticos = 0;
+
+            for (let itemId in checklist) {
+                const item = checklist[itemId];
+                if (!item.checked) continue;
+
+                total++;
+                const aval = item.evaluation || '';
+
+                if (aval === 'Conforme' || ['MB', 'B', 'OK'].includes(aval)) {
+                    conformes++;
+                } else if (aval === 'NC' || ['R', 'MR'].includes(aval)) {
+                    naoConformes++;
+                    if (aval === 'MR') criticos++;
+                }
+            }
+
+            const percentual = total > 0 ? Math.round((conformes / total) * 100) : 0;
+
+            return {
+                conformidade: percentual,
+                totalItens: total,
+                conformes,
+                naoConformes,
+                criticos
+            };
+        }
+
+        function validarCPFCNPJ(valor) {
+            // Remover caracteres não numéricos
+            valor = valor.replace(/[^\d]/g, '');
+
+            if (valor.length === 11 || valor.length === 14) {
+                return true; // Validação básica
+            }
+            return false;
+        }
+
+        function mostrarToast(mensagem, tipo = 'info') {
+            // Criar elemento de toast se não existir
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10000;';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${tipo}`;
+            toast.style.cssText = `
+                background: ${tipo === 'success' ? '#02781E' : tipo === 'error' ? '#dc3545' : '#013A0F'};
+                color: white;
+                padding: 15px 20px;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease;
+                min-width: 250px;
+            `;
+            toast.textContent = mensagem;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function confirmarAcao(mensagem) {
+            return confirm(mensagem);
+        }
+
+        // Variável global para armazenar empreendimento selecionado
+        let empreendimentoSelecionado = null;
+        let vistoriaAtualId = null;
+
+        // ═══════════════════════════════════════════════════════════════
+        // FUNÇÕES DE NAVEGAÇÃO
+        // ═══════════════════════════════════════════════════════════════
+
+        function voltarMenu() {
+            switchScreen('screen-menu');
+            atualizarBadgesMenu();
+        }
+
+        function irParaEmpreendimentos() {
+            switchScreen('screen-empreendimentos');
+            carregarListaEmpreendimentos();
+        }
+
+        function irParaNovaVistoria() {
+            switchScreen('screen-nova-vistoria');
+            carregarSelectEmpreendimentos();
+            // Limpar seleção anterior
+            empreendimentoSelecionado = null;
+            document.getElementById('selectEmpreendimento').value = '';
+            document.getElementById('formDadosEmpreendimento').style.display = 'none';
+            document.getElementById('infoEmpreendimentoSelecionado').style.display = 'none';
+        }
+
+        function irParaHistorico() {
+            switchScreen('screen-historico');
+            carregarHistorico();
+            carregarFiltroEmpreendimentos();
+        }
+
+        function atualizarBadgesMenu() {
+            const empreendimentos = listarEmpreendimentos();
+            const vistorias = listarVistorias();
+
+            document.getElementById('badge-empreendimentos').textContent =
+                `${empreendimentos.length} ${empreendimentos.length === 1 ? 'obra' : 'obras'}`;
+
+            document.getElementById('badge-vistorias').textContent =
+                `${vistorias.length} ${vistorias.length === 1 ? 'vistoria' : 'vistorias'}`;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // GERENCIAMENTO DE EMPREENDIMENTOS - UI
+        // ═══════════════════════════════════════════════════════════════
+
+        function novoEmpreendimento() {
+            console.log('novoEmpreendimento() chamada');
+            try {
+                const empreendimentoId = document.getElementById('empreendimentoId');
+                const modalTitulo = document.getElementById('modalEmpreendimentoTitulo');
+                const modal = document.getElementById('modalEmpreendimento');
+
+                console.log('Elementos encontrados:', {
+                    empreendimentoId: !!empreendimentoId,
+                    modalTitulo: !!modalTitulo,
+                    modal: !!modal
+                });
+
+                if (!empreendimentoId || !modalTitulo) {
+                    console.error('Elementos do modal não encontrados');
+                    alert('Erro ao abrir modal. Verifique o console.');
+                    return;
+                }
+
+                empreendimentoId.value = '';
+                modalTitulo.textContent = 'Novo Empreendimento';
+                console.log('Limpando formulário...');
+                limparFormEmpreendimento();
+                console.log('Abrindo modal...');
+                abrirModalEmpreendimento();
+                console.log('Modal aberto com sucesso!');
+            } catch (error) {
+                console.error('Erro ao abrir modal:', error);
+                alert('Erro ao abrir modal: ' + error.message);
+            }
+        }
+
+        function editarEmpreendimento(id) {
+            const emp = buscarEmpreendimento(id);
+            if (!emp) return;
+
+            document.getElementById('empreendimentoId').value = emp.id;
+            document.getElementById('modalEmpreendimentoTitulo').textContent = 'Editar Empreendimento';
+            document.getElementById('modalNomeEmpreendimento').value = emp.nomeEmpreendimento || '';
+            document.getElementById('modalNomeCliente').value = emp.nomeCliente || '';
+            document.getElementById('modalEndereco').value = emp.endereco || '';
+            document.getElementById('modalMunicipio').value = emp.municipio || '';
+            document.getElementById('modalBairro').value = emp.bairro || '';
+            document.getElementById('modalCpfCnpj').value = emp.cpfCnpj || '';
+            document.getElementById('modalTelefone').value = emp.telefone || '';
+
+            abrirModalEmpreendimento();
+        }
+
+        function excluirEmpreendimentoUI(id) {
+            const emp = buscarEmpreendimento(id);
+            if (!emp) return;
+
+            const vistorias = listarVistorias(id);
+            const msg = vistorias.length > 0
+                ? `Tem certeza que deseja excluir "${emp.nomeEmpreendimento}"?\n\nIsso excluirá o empreendimento e TODAS as ${vistorias.length} vistoria(s).`
+                : `Tem certeza que deseja excluir "${emp.nomeEmpreendimento}"?`;
+
+            if (confirmarAcao(msg)) {
+                excluirEmpreendimento(id);
+                carregarListaEmpreendimentos();
+                atualizarBadgesMenu();
+            }
+        }
+
+        function verVistoriasEmpreendimento(id) {
+            document.getElementById('filtroEmpreendimento').value = id;
+            irParaHistorico();
+            filtrarHistorico(id);
+        }
+
+        function abrirModalEmpreendimento() {
+            const modal = document.getElementById('modalEmpreendimento');
+            if (!modal) {
+                console.error('Modal de empreendimento não encontrado no DOM');
+                alert('Erro: Modal não encontrado. Recarregue a página.');
+                return;
+            }
+            modal.classList.add('active');
+        }
+
+        function fecharModalEmpreendimento() {
+            const modal = document.getElementById('modalEmpreendimento');
+            if (!modal) return;
+
+            modal.classList.remove('active');
+            limparFormEmpreendimento();
+        }
+
+        function limparFormEmpreendimento() {
+            const form = document.getElementById('formEmpreendimento');
+            const empreendimentoId = document.getElementById('empreendimentoId');
+
+            if (form) form.reset();
+            if (empreendimentoId) empreendimentoId.value = '';
+        }
+
+        function salvarEmpreendimentoModal() {
+            const id = document.getElementById('empreendimentoId').value;
+            const dados = {
+                nomeEmpreendimento: document.getElementById('modalNomeEmpreendimento').value.trim(),
+                nomeCliente: document.getElementById('modalNomeCliente').value.trim(),
+                endereco: document.getElementById('modalEndereco').value.trim(),
+                municipio: document.getElementById('modalMunicipio').value.trim(),
+                bairro: document.getElementById('modalBairro').value.trim(),
+                cpfCnpj: document.getElementById('modalCpfCnpj').value.trim(),
+                telefone: document.getElementById('modalTelefone').value.trim()
+            };
+
+            if (!dados.nomeEmpreendimento) {
+                alert('Por favor, preencha pelo menos o nome do empreendimento.');
+                return;
+            }
+
+            if (id) {
+                dados.id = id;
+            }
+
+            const idSalvo = salvarEmpreendimento(dados);
+            fecharModalEmpreendimento();
+            carregarListaEmpreendimentos();
+            atualizarBadgesMenu();
+
+            // Se foi chamado de "novo empreendimento rápido"
+            if (window.cadastroRapidoAtivo) {
+                window.cadastroRapidoAtivo = false;
+                carregarSelectEmpreendimentos();
+                document.getElementById('selectEmpreendimento').value = idSalvo;
+                selecionarEmpreendimento(idSalvo);
+            }
+        }
+
+        function novoEmpreendimentoRapido() {
+            window.cadastroRapidoAtivo = true;
+            novoEmpreendimento();
+        }
+
+        function carregarListaEmpreendimentos() {
+            const empreendimentos = listarEmpreendimentos();
+            const container = document.getElementById('listaEmpreendimentos');
+
+            if (empreendimentos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🏢</div>
+                        <h3>Nenhum empreendimento cadastrado</h3>
+                        <p>Comece cadastrando seu primeiro empreendimento</p>
+                        <button class="btn btn-primary" onclick="novoEmpreendimento()">+ Cadastrar Primeiro Empreendimento</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            empreendimentos.forEach(emp => {
+                const vistorias = listarVistorias(emp.id);
+                const dataUltima = emp.ultimaVistoria ? new Date(emp.ultimaVistoria).toLocaleDateString('pt-BR') : 'Nunca';
+
+                html += `
+                    <div class="lista-item">
+                        <div class="lista-item-header">
+                            <div class="lista-item-titulo">
+                                <h3>${emp.nomeEmpreendimento || 'Sem nome'}</h3>
+                                <p><strong>Cliente:</strong> ${emp.nomeCliente || 'Não informado'}</p>
+                                <p><strong>Município:</strong> ${emp.municipio || 'Não informado'}</p>
+                                <p><strong>Total de vistorias:</strong> ${vistorias.length}</p>
+                                <p><strong>Última vistoria:</strong> ${dataUltima}</p>
+                            </div>
+                            <div class="lista-item-acoes">
+                                <button class="btn btn-primary" onclick="editarEmpreendimento('${emp.id}')">Editar</button>
+                                <button class="btn btn-secondary" onclick="verVistoriasEmpreendimento('${emp.id}')">Ver Vistorias</button>
+                                <button class="btn btn-danger" onclick="excluirEmpreendimentoUI('${emp.id}')">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SELEÇÃO DE EMPREENDIMENTO PARA NOVA VISTORIA
+        // ═══════════════════════════════════════════════════════════════
+
+        function carregarSelectEmpreendimentos() {
+            const select = document.getElementById('selectEmpreendimento');
+            const empreendimentos = listarEmpreendimentos();
+
+            select.innerHTML = '<option value="">-- Selecione um empreendimento --</option>';
+
+            empreendimentos.forEach(emp => {
+                const vistorias = listarVistorias(emp.id);
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.nomeEmpreendimento} - ${emp.municipio || 'S/ município'} (${vistorias.length} vistorias)`;
+                select.appendChild(option);
+            });
+        }
+
+        function selecionarEmpreendimento(id) {
+            if (!id) {
+                document.getElementById('formDadosEmpreendimento').style.display = 'none';
+                document.getElementById('infoEmpreendimentoSelecionado').style.display = 'none';
+                empreendimentoSelecionado = null;
+                return;
+            }
+
+            const emp = buscarEmpreendimento(id);
+            if (!emp) return;
+
+            empreendimentoSelecionado = emp;
+
+            // Preencher dados do empreendimento
+            document.getElementById('nomeEmpreendimento').value = emp.nomeEmpreendimento || '';
+            document.getElementById('nomeCliente').value = emp.nomeCliente || '';
+            document.getElementById('endereco').value = emp.endereco || '';
+            document.getElementById('municipio').value = emp.municipio || '';
+            document.getElementById('bairro').value = emp.bairro || '';
+            document.getElementById('cpfCnpj').value = emp.cpfCnpj || '';
+            document.getElementById('telefone').value = emp.telefone || '';
+
+            // Buscar última vistoria
+            const ultimaVistoria = buscarUltimaVistoria(id);
+            const proximoNumero = ultimaVistoria ? (ultimaVistoria.numeroVistoria + 1) : 1;
+
+            document.getElementById('numeroVisita').value = proximoNumero;
+
+            // Mostrar informações
+            const infoDiv = document.getElementById('infoEmpreendimentoSelecionado');
+            if (ultimaVistoria) {
+                const resumo = ultimaVistoria.resumo || calcularConformidade(ultimaVistoria.checklist);
+                const pendencias = identificarPendencias(ultimaVistoria);
+
+                infoDiv.innerHTML = `
+                    <div class="info-box">
+                        <h4>✅ Empreendimento Selecionado</h4>
+                        <p><strong>Última vistoria:</strong> #${ultimaVistoria.numeroVistoria} - ${ultimaVistoria.data}</p>
+                        <p><strong>Conformidade anterior:</strong> ${resumo.conformidade}%</p>
+                        <p><strong>Pendências da última vistoria:</strong> ${pendencias.length} ${pendencias.length === 1 ? 'item' : 'itens'}</p>
+                    </div>
+                `;
+            } else {
+                infoDiv.innerHTML = `
+                    <div class="info-box">
+                        <h4>✅ Empreendimento Selecionado</h4>
+                        <p>Esta será a primeira vistoria deste empreendimento.</p>
+                    </div>
+                `;
+            }
+
+            infoDiv.style.display = 'block';
+            document.getElementById('formDadosEmpreendimento').style.display = 'block';
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // HISTÓRICO DE VISTORIAS
+        // ═══════════════════════════════════════════════════════════════
+
+        function carregarFiltroEmpreendimentos() {
+            const select = document.getElementById('filtroEmpreendimento');
+            const empreendimentos = listarEmpreendimentos();
+
+            select.innerHTML = '<option value="">Todos os empreendimentos</option>';
+
+            empreendimentos.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = emp.nomeEmpreendimento;
+                select.appendChild(option);
+            });
+        }
+
+        function carregarHistorico(empreendimentoId = null) {
+            const vistorias = listarVistorias(empreendimentoId);
+            const container = document.getElementById('listaHistorico');
+
+            if (vistorias.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>Nenhuma vistoria encontrada</h3>
+                        <p>${empreendimentoId ? 'Este empreendimento ainda não possui vistorias' : 'Nenhuma vistoria foi realizada ainda'}</p>
+                        <button class="btn btn-primary" onclick="irParaNovaVistoria()">+ Nova Vistoria</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Ordenar por data (mais recente primeiro)
+            vistorias.sort((a, b) => {
+                const dateA = new Date(a.data.split('/').reverse().join('-'));
+                const dateB = new Date(b.data.split('/').reverse().join('-'));
+                return dateB - dateA;
+            });
+
+            let html = '';
+            vistorias.forEach(vis => {
+                const emp = buscarEmpreendimento(vis.empreendimentoId);
+                const resumo = vis.resumo || calcularConformidade(vis.checklist);
+
+                html += `
+                    <div class="lista-item">
+                        <div class="lista-item-header">
+                            <div class="lista-item-titulo">
+                                <h3>📋 Vistoria #${vis.numeroVistoria} - ${emp ? emp.nomeEmpreendimento : 'Empreendimento excluído'}</h3>
+                                <p><strong>Data:</strong> ${vis.data} | <strong>Conformidade:</strong> ${resumo.conformidade}%</p>
+                                <p><strong>Engenheiro:</strong> ${vis.engenheiroVistoriador}</p>
+                                <p><strong>Itens verificados:</strong> ${resumo.totalItens} | <strong>Conformes:</strong> ${resumo.conformes} | <strong>NCs:</strong> ${resumo.naoConformes}</p>
+                            </div>
+                            <div class="lista-item-acoes">
+                                <button class="btn btn-primary" onclick="verRelatorioVistoria('${vis.id}')">Ver Relatório</button>
+                                <button class="btn btn-danger" onclick="excluirVistoriaUI('${vis.id}')">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function filtrarHistorico(empreendimentoId) {
+            carregarHistorico(empreendimentoId || null);
+        }
+
+        function excluirVistoriaUI(id) {
+            if (confirmarAcao('Tem certeza que deseja excluir esta vistoria?')) {
+                excluirVistoria(id);
+                const filtro = document.getElementById('filtroEmpreendimento').value;
+                carregarHistorico(filtro || null);
+                atualizarBadgesMenu();
+            }
+        }
+
+        function verRelatorioVistoria(id) {
+            // TODO: Implementar visualização de relatório
+            alert('Funcionalidade de visualização de relatório será implementada em breve!');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // MODIFICAR FUNÇÃO INICIAR VISTORIA
+        // ═══════════════════════════════════════════════════════════════
+
+        const iniciarVistoriaOriginal = iniciarVistoria;
+
+        function iniciarVistoria() {
+            // Validar seleção de empreendimento
+            if (!empreendimentoSelecionado) {
+                alert('Por favor, selecione um empreendimento antes de iniciar a vistoria.');
+                return;
+            }
+
+            // Validar campos obrigatórios
+            const engenheiroVistoriador = document.getElementById('engenheiroVistoriador').value.trim();
+            const numeroTrabalhadores = document.getElementById('numeroTrabalhadores').value;
+
+            if (!engenheiroVistoriador) {
+                alert('Por favor, preencha o nome do Engenheiro Vistoriador.');
+                return;
+            }
+
+            if (!numeroTrabalhadores) {
+                alert('Por favor, preencha o número de trabalhadores.');
+                return;
+            }
+
+            // Preparar dados da vistoria
+            vistoriaAtualId = 'vis_' + Date.now();
+            vistoriaData.empreendimentoId = empreendimentoSelecionado.id;
+            vistoriaData.id = vistoriaAtualId;
+
+            // Coletar dados do formulário
+            vistoriaData.info = {
+                nomeEmpreendimento: document.getElementById('nomeEmpreendimento').value,
+                nomeCliente: document.getElementById('nomeCliente').value,
+                endereco: document.getElementById('endereco').value,
+                municipio: document.getElementById('municipio').value,
+                bairro: document.getElementById('bairro').value,
+                cpfCnpj: document.getElementById('cpfCnpj').value,
+                telefone: document.getElementById('telefone').value,
+                numeroVisita: document.getElementById('numeroVisita').value,
+                dataVisita: document.getElementById('dataVisita').value,
+                horaInicio: document.getElementById('horaInicio').value,
+                engenheiroVistoriador: engenheiroVistoriador,
+                engenheiroAcompanhante: document.getElementById('engenheiroAcompanhante').value,
+                numeroTrabalhadores: numeroTrabalhadores
+            };
+
+            vistoriaData.startTime = new Date().toISOString();
+
+            // Ir para o checklist
+            switchScreen('screen-checklist');
+            renderSidebar();
+            renderMainContent('1');
+        }
+
+        function voltarMenuComReset() {
+            // Limpar URL do PDF se existir
+            if (window.currentPdfUrl) {
+                URL.revokeObjectURL(window.currentPdfUrl);
+                window.currentPdfUrl = null;
+            }
+
+            // Resetar dados da vistoria
+            resetApp();
+
+            // Voltar ao menu
+            voltarMenu();
+        }
+
+        // Inicialização da aplicação
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Carregado - Inicializando aplicação...');
+            atualizarBadgesMenu();
+
+            // Verificar se todos os elementos críticos existem
+            const elementosCriticos = {
+                'modalEmpreendimento': document.getElementById('modalEmpreendimento'),
+                'empreendimentoId': document.getElementById('empreendimentoId'),
+                'modalEmpreendimentoTitulo': document.getElementById('modalEmpreendimentoTitulo'),
+                'formEmpreendimento': document.getElementById('formEmpreendimento')
+            };
+
+            console.log('Elementos críticos encontrados:', elementosCriticos);
+
+            // Verificar se algum está faltando
+            for (let nome in elementosCriticos) {
+                if (!elementosCriticos[nome]) {
+                    console.error(`ERRO: Elemento ${nome} não encontrado no DOM!`);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
