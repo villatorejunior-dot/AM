@@ -370,12 +370,73 @@
             color: white;
         }
         
-        .eval-btn.conforme { border-color: var(--success-green); color: var(--success-green); }
-        .eval-btn.conforme.active { background: var(--success-green); border-color: var(--success-green); }
+        /* Evaluation Buttons */
+        .eval-btn.eval-s {
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+        .eval-btn.eval-s.active {
+            background: var(--success-green);
+            border-color: var(--success-green);
+            color: white;
+        }
+
+        .eval-btn.eval-n {
+            border-color: var(--danger-red);
+            color: var(--danger-red);
+        }
+        .eval-btn.eval-n.active {
+            background: var(--danger-red);
+            border-color: var(--danger-red);
+            color: white;
+        }
+
+        .eval-btn.eval-i {
+            border-color: #ff9800;
+            color: #ff9800;
+        }
+        .eval-btn.eval-i.active {
+            background: #ff9800;
+            border-color: #ff9800;
+            color: white;
+        }
+
+        .eval-btn.eval-nap {
+            border-color: #9e9e9e;
+            color: #9e9e9e;
+        }
+        .eval-btn.eval-nap.active {
+            background: #9e9e9e;
+            border-color: #9e9e9e;
+            color: white;
+        }
         
-        .eval-btn.nc { border-color: var(--danger-red); color: var(--danger-red); }
-        .eval-btn.nc.active { background: var(--danger-red); border-color: var(--danger-red); }
-        
+        /* Risk Badges */
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .risk-critico {
+            background: #dc3545;
+            color: white;
+        }
+
+        .risk-moderado {
+            background: #ff9800;
+            color: white;
+        }
+
+        .risk-adequado {
+            background: #027a3e;
+            color: white;
+        }
+
         /* Observation Textarea */
         .observation-area {
             margin-bottom: 15px;
@@ -1442,6 +1503,52 @@
         </div>
     </div>
 
+    <!-- Modal de Trabalhadores -->
+    <div class="modal-overlay" id="modalTrabalhador">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTrabalhadorTitulo">Novo Trabalhador</h2>
+                <button class="btn-close" onclick="fecharModalTrabalhador()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="formTrabalhador">
+                    <input type="hidden" id="trabalhadorIndex" value="">
+
+                    <div class="form-group">
+                        <label>Nome Completo *</label>
+                        <input type="text" id="trabalhadorNome" placeholder="Ex: João Silva" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Função *</label>
+                        <input type="text" id="trabalhadorFuncao" placeholder="Ex: Pedreiro, Servente, Armador" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data de Admissão *</label>
+                            <input type="date" id="trabalhadorDataAdmissao" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Situação *</label>
+                            <select id="trabalhadorSituacao" required>
+                                <option value="">Selecione...</option>
+                                <option value="Registrado">Registrado (CLT)</option>
+                                <option value="Temporário">Temporário</option>
+                                <option value="Terceirizado">Terceirizado</option>
+                                <option value="Autônomo">Autônomo</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalTrabalhador()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarTrabalhador()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1452,6 +1559,7 @@
         let vistoriaData = {
             info: {},
             checklist: {},
+            trabalhadores: [],  // Lista de trabalhadores no local
             startTime: null,
             endTime: null
         };
@@ -1459,276 +1567,213 @@
         // Checklist Structure
         const checklistStructure = {
             "1": {
-                title: "SERVIÇOS EM EXECUÇÃO",
+                title: "EPI'S - EQUIPAMENTOS DE PROTEÇÃO INDIVIDUAL (NR 06)",
                 sections: {
                     "1.1": {
-                        title: "Fundações e Contenções",
+                        title: "Equipamentos de Proteção Individual",
                         items: [
-                            { text: "Escavações protegidas adequadamente", type: "conform" },
-                            { text: "Escoramento dimensionado e instalado", type: "conform" },
-                            { text: "Sinalização de áreas de risco", type: "rating" },
-                            { text: "Acesso seguro às escavações", type: "conform" },
-                            { text: "Drenagem adequada", type: "rating" }
-                        ]
-                    },
-                    "1.2": {
-                        title: "Estrutura (Concreto/Alvenaria)",
-                        items: [
-                            { text: "Proteção de bordas de lajes", type: "conform" },
-                            { text: "Telas de proteção instaladas", type: "rating" },
-                            { text: "Plataformas de trabalho adequadas", type: "conform" },
-                            { text: "Escadas provisórias em bom estado", type: "rating" },
-                            { text: "Vãos e aberturas protegidos", type: "conform" },
-                            { text: "Estoque de materiais organizado", type: "rating" }
-                        ]
-                    },
-                    "1.3": {
-                        title: "Trabalho em Altura (NR 35)",
-                        items: [
-                            { text: "Linha de vida instalada", type: "conform" },
-                            { text: "Pontos de ancoragem certificados", type: "conform" },
-                            { text: "Andaimes com guarda-corpo", type: "conform" },
-                            { text: "Uso de trava-quedas", type: "conform" },
-                            { text: "Sinalização de área isolada", type: "rating" }
-                        ]
-                    },
-                    "1.4": {
-                        title: "Máquinas e Equipamentos",
-                        items: [
-                            { text: "Betoneira com proteção", type: "conform" },
-                            { text: "Serra circular com coifa", type: "conform" },
-                            { text: "Equipamentos aterrados", type: "conform" },
-                            { text: "Estado de conservação", type: "rating" },
-                            { text: "Operadores habilitados", type: "conform" }
-                        ]
-                    },
-                    "1.5": {
-                        title: "Instalações Elétricas Provisórias",
-                        items: [
-                            { text: "Quadros elétricos com DR", type: "conform" },
-                            { text: "Fiação protegida", type: "rating" },
-                            { text: "Aterramento adequado", type: "conform" },
-                            { text: "Identificação de circuitos", type: "conform" },
-                            { text: "Iluminação adequada", type: "rating" }
-                        ]
-                    },
-                    "1.6": {
-                        title: "Elevador de Carga/Cremalheira",
-                        items: [
-                            { text: "Cabine fechada", type: "conform" },
-                            { text: "Portas guilhotina funcionando", type: "conform" },
-                            { text: "Manutenção em dia (ART)", type: "conform" },
-                            { text: "Operador treinado", type: "conform" },
-                            { text: "Sinalização de carga máxima", type: "conform" }
+                            { text: "Vestimenta de trabalho", nr: "NR 06" },
+                            { text: "Calçados", nr: "NR 06" },
+                            { text: "Bota de borracha (para local úmido)", nr: "NR 06" },
+                            { text: "Capacete", nr: "NR 06" },
+                            { text: "Cinto de segurança", nr: "NR 06" },
+                            { text: "Luva (couro ou raspa de couro)", nr: "NR 06" },
+                            { text: "Luva (borracha ou impermeável)", nr: "NR 06" },
+                            { text: "Máscara respiratória (mínimo D2)", nr: "NR 06" },
+                            { text: "Óculos", nr: "NR 06" },
+                            { text: "Avental (impermeável)", nr: "NR 06" },
+                            { text: "Avental (couro ou raspa de couro)", nr: "NR 06" },
+                            { text: "Protetor auricular", nr: "NR 06" }
                         ]
                     }
                 }
             },
             "2": {
-                title: "ÁREAS DE VIVÊNCIA (NR 18)",
+                title: "INSTALAÇÕES SANITÁRIAS (NR 24/18)",
                 sections: {
                     "2.1": {
                         title: "Instalações Sanitárias",
                         items: [
-                            { text: "Quantidade adequada de vasos", type: "conform" },
-                            { text: "Limpeza e higienização", type: "rating" },
-                            { text: "Chuveiros funcionando", type: "conform" },
-                            { text: "Ventilação adequada", type: "rating" },
-                            { text: "Papel higiênico e sabonete", type: "conform" },
-                            { text: "Coleta de lixo", type: "rating" }
-                        ]
-                    },
-                    "2.2": {
-                        title: "Vestiários",
-                        items: [
-                            { text: "Armários individuais", type: "conform" },
-                            { text: "Bancos em número adequado", type: "conform" },
-                            { text: "Limpeza e organização", type: "rating" },
-                            { text: "Área coberta", type: "conform" }
-                        ]
-                    },
-                    "2.3": {
-                        title: "Refeitório",
-                        items: [
-                            { text: "Mesas e bancos suficientes", type: "conform" },
-                            { text: "Bebedouro/água potável", type: "conform" },
-                            { text: "Aquecedor de marmitas", type: "conform" },
-                            { text: "Limpeza do ambiente", type: "rating" },
-                            { text: "Proteção contra intempéries", type: "conform" },
-                            { text: "Coleta seletiva de lixo", type: "rating" }
-                        ]
-                    },
-                    "2.4": {
-                        title: "Alojamento (se aplicável)",
-                        items: [
-                            { text: "Camas/beliches adequados", type: "rating" },
-                            { text: "Área mínima por trabalhador", type: "conform" },
-                            { text: "Ventilação e iluminação", type: "rating" },
-                            { text: "Roupas de cama limpas", type: "rating" }
+                            { text: "Papel higiênico", nr: "NR 24/18" },
+                            { text: "Mictórios", nr: "NR 24/18" },
+                            { text: "Vasos sanitários com Tampa", nr: "NR 24/18" },
+                            { text: "Lavatórios", nr: "NR 24/18" },
+                            { text: "Chuveiros", nr: "NR 24/18" },
+                            { text: "Vestiários", nr: "NR 24/18" },
+                            { text: "Alojamentos", nr: "NR 24/18" },
+                            { text: "Utensílio adequado para refeições", nr: "NR 24/18" },
+                            { text: "Armários individuais", nr: "NR 24/18" },
+                            { text: "Refeitórios", nr: "NR 24/18" },
+                            { text: "Aquecedor de refeições", nr: "NR 24/18" },
+                            { text: "Água potável e fresca", nr: "NR 24/18" },
+                            { text: "Área de vivência básica", nr: "NR 24/18" }
                         ]
                     }
                 }
             },
             "3": {
-                title: "SEGURANÇA DO TRABALHO - CAMPO",
+                title: "MEDIDAS CONTRA QUEDA ALTURA (NR 18)",
                 sections: {
                     "3.1": {
-                        title: "EPIs (Equipamentos de Proteção Individual)",
+                        title: "Proteção Contra Quedas",
                         items: [
-                            { text: "Capacetes em uso", type: "rating" },
-                            { text: "Botinas de segurança", type: "rating" },
-                            { text: "Óculos de proteção (quando necessário)", type: "conform" },
-                            { text: "Luvas adequadas à atividade", type: "rating" },
-                            { text: "Protetor auricular (quando necessário)", type: "conform" },
-                            { text: "Máscaras/respiradores (quando necessário)", type: "conform" },
-                            { text: "Cinto de segurança tipo paraquedista (trabalho em altura)", type: "conform" },
-                            { text: "Estado de conservação dos EPIs", type: "rating" },
-                            { text: "CAs válidos e legíveis", type: "conform" }
-                        ]
-                    },
-                    "3.2": {
-                        title: "EPCs (Equipamentos de Proteção Coletiva)",
-                        items: [
-                            { text: "Guarda-corpo e rodapé", type: "conform" },
-                            { text: "Telas de proteção periféricas", type: "rating" },
-                            { text: "Plataformas de proteção (bandejas)", type: "conform" },
-                            { text: "Sinalização de segurança", type: "rating" },
-                            { text: "Fitas zebradas/cones", type: "rating" },
-                            { text: "Extintores (quantidade e validade)", type: "conform" },
-                            { text: "Tapumes e portões", type: "rating" }
-                        ]
-                    },
-                    "3.3": {
-                        title: "Sinalização",
-                        items: [
-                            { text: "Placas de segurança visíveis", type: "rating" },
-                            { text: "Sinalização de área de risco", type: "conform" },
-                            { text: "Identificação de saídas de emergência", type: "conform" },
-                            { text: "Faixas de delimitação", type: "rating" }
-                        ]
-                    },
-                    "3.4": {
-                        title: "Organização e Limpeza (5S)",
-                        items: [
-                            { text: "Canteiro organizado", type: "rating" },
-                            { text: "Materiais estocados adequadamente", type: "rating" },
-                            { text: "Lixo segregado e acondicionado", type: "rating" },
-                            { text: "Acessos desobstruídos", type: "conform" },
-                            { text: "Entulho recolhido", type: "rating" }
-                        ]
-                    },
-                    "3.5": {
-                        title: "Treinamentos e Capacitação",
-                        items: [
-                            { text: "Trabalhadores com integração", type: "conform" },
-                            { text: "DDS (Diálogo Diário de Segurança)", type: "conform" },
-                            { text: "Treinamento NR 35 (trabalho em altura)", type: "conform" },
-                            { text: "Treinamento NR 18 atualizado", type: "conform" },
-                            { text: "Operadores com cursos válidos", type: "conform" }
+                            { text: "Plataforma principal", nr: "NR 18" },
+                            { text: "Plataforma secundária a cada 3 lajes", nr: "NR 18" },
+                            { text: "Abertura em piso protegida", nr: "NR 18" },
+                            { text: "Telas de proteção", nr: "NR 18" }
                         ]
                     }
                 }
             },
             "4": {
-                title: "SEGURANÇA DO TRABALHO - DOCUMENTAÇÃO",
+                title: "GUARDA CORPOS (NR 18)",
                 sections: {
                     "4.1": {
-                        title: "Documentos Obrigatórios",
+                        title: "Guarda-Corpos",
                         items: [
-                            { text: "PCMAT disponível e atualizado", type: "conform" },
-                            { text: "PPRA/PGR disponível", type: "conform" },
-                            { text: "LTCAT (se aplicável)", type: "conform" },
-                            { text: "Alvará de construção", type: "conform" },
-                            { text: "ART/TRT de segurança", type: "conform" },
-                            { text: "Ordem de serviço de segurança", type: "conform" }
-                        ]
-                    },
-                    "4.2": {
-                        title: "Registros de Treinamento",
-                        items: [
-                            { text: "Fichas de EPI assinadas", type: "conform" },
-                            { text: "Listas de presença em treinamentos", type: "conform" },
-                            { text: "Certificados de NR 35", type: "conform" },
-                            { text: "Certificados de NR 18", type: "conform" },
-                            { text: "Registro de DDS", type: "rating" }
-                        ]
-                    },
-                    "4.3": {
-                        title: "Laudos e Certificados",
-                        items: [
-                            { text: "Laudo de instalações elétricas", type: "conform" },
-                            { text: "ART de andaimes", type: "conform" },
-                            { text: "ART de cremalheira/elevador", type: "conform" },
-                            { text: "Certificados de EPIs (CAs)", type: "conform" },
-                            { text: "Manutenções de equipamentos em dia", type: "conform" }
-                        ]
-                    },
-                    "4.4": {
-                        title: "Organização Documental",
-                        items: [
-                            { text: "Documentos organizados e acessíveis", type: "rating" },
-                            { text: "Responsável técnico identificado", type: "conform" },
-                            { text: "Atualizações periódicas realizadas", type: "rating" }
+                            { text: "Periferias", nr: "NR 18" },
+                            { text: "Sacadas", nr: "NR 18" },
+                            { text: "Escadas", nr: "NR 18" },
+                            { text: "Rampas", nr: "NR 18" }
                         ]
                     }
                 }
             },
             "5": {
-                title: "OUTROS",
+                title: "SERRA CIRCULAR E POLICORTE (NR 18)",
                 sections: {
                     "5.1": {
-                        title: "Meio Ambiente",
+                        title: "Serra Circular e Policorte",
                         items: [
-                            { text: "Controle de poeira", type: "rating" },
-                            { text: "Controle de ruído", type: "rating" },
-                            { text: "Gestão de resíduos", type: "rating" },
-                            { text: "Armazenamento de produtos químicos", type: "conform" },
-                            { text: "Proteção de áreas verdes (se aplicável)", type: "conform" }
-                        ]
-                    },
-                    "5.2": {
-                        title: "Vizinhança e Logística",
-                        items: [
-                            { text: "Impacto na vizinhança controlado", type: "rating" },
-                            { text: "Horários de trabalho respeitados", type: "conform" },
-                            { text: "Acesso de veículos controlado", type: "rating" },
-                            { text: "Sinalização externa adequada", type: "rating" }
-                        ]
-                    },
-                    "5.3": {
-                        title: "Gestão de Pessoas",
-                        items: [
-                            { text: "Presença de técnico de segurança", type: "conform" },
-                            { text: "Equipe dimensionada adequadamente", type: "rating" },
-                            { text: "Comunicação efetiva", type: "rating" }
+                            { text: "Coifa com cutelo divisor", nr: "NR 18" },
+                            { text: "Aterramento elétrico", nr: "NR 18" },
+                            { text: "Conservação da mesa", nr: "NR 18" },
+                            { text: "Dispositivo empurrador", nr: "NR 18" },
+                            { text: "Proteção nas correias", nr: "NR 18" },
+                            { text: "Conservação do disco", nr: "NR 18" },
+                            { text: "Limpeza da área", nr: "NR 18" },
+                            { text: "Extintor nas proximidades", nr: "NR 18" }
                         ]
                     }
                 }
             },
             "6": {
-                title: "BONIFICAÇÕES/PENALIDADES",
+                title: "BETONEIRA (NR 18/12)",
                 sections: {
                     "6.1": {
-                        title: "Pontos Positivos (Bonificações)",
+                        title: "Betoneira",
                         items: [
-                            { text: "Inovações em segurança implementadas", type: "description" },
-                            { text: "Canteiro modelo/referência", type: "description" },
-                            { text: "Zero acidentes no período", type: "description" },
-                            { text: "Iniciativas de conscientização", type: "description" },
-                            { text: "Uso de tecnologia para segurança", type: "description" },
-                            { text: "Cultura de segurança evidente", type: "description" }
+                            { text: "Proteção de Cremalheira", nr: "NR 18/12" },
+                            { text: "Aterramento elétrico", nr: "NR 18/12" },
+                            { text: "Instalação elétrica adequada", nr: "NR 18/12" },
+                            { text: "Chave de Acionamento", nr: "NR 18/12" },
+                            { text: "Cobertura em máquinas e equipamentos", nr: "NR 18/12" },
+                            { text: "Proteção compartimento do Motor", nr: "NR 18/12" },
+                            { text: "Dispositivo de Parada de Emergência", nr: "NR 18/12" }
                         ]
-                    },
-                    "6.2": {
-                        title: "Não Conformidades Críticas (Penalidades)",
+                    }
+                }
+            },
+            "7": {
+                title: "ANDAIMES FIXOS E SUSPENSOS (NR 18)",
+                sections: {
+                    "7.1": {
+                        title: "Andaimes",
                         items: [
-                            { text: "Trabalho em altura sem proteção - INTERDITAR", type: "critical" },
-                            { text: "Instalação elétrica irregular - ATENÇÃO", type: "critical" },
-                            { text: "Ausência de EPIs obrigatórios - ADVERTÊNCIA", type: "critical" },
-                            { text: "Equipamentos sem manutenção - ATENÇÃO", type: "critical" },
-                            { text: "PCMAT desatualizado/ausente - CRÍTICO", type: "critical" },
-                            { text: "Área de risco sem isolamento - INTERDITAR", type: "critical" },
-                            { text: "Reincidência de não conformidades - PENALIDADE", type: "critical" }
+                            { text: "Pisos com forração completa", nr: "NR 18" },
+                            { text: "Fixação na estrutura da edificação", nr: "NR 18" },
+                            { text: "Guarda corpos", nr: "NR 18" },
+                            { text: "Cabos de Aço", nr: "NR 18" },
+                            { text: "Sustentação", nr: "NR 18" },
+                            { text: "Cabo guia fixação cintos de segurança", nr: "NR 18" },
+                            { text: "Travamento dos Montantes", nr: "NR 18" },
+                            { text: "Escadas de Acesso", nr: "NR 18" },
+                            { text: "Sapata Niveladora", nr: "NR 18" }
+                        ]
+                    }
+                }
+            },
+            "8": {
+                title: "ELEVADORES (NR 18)",
+                sections: {
+                    "8.1": {
+                        title: "Elevadores",
+                        items: [
+                            { text: "Operador qualificado", nr: "NR 18" },
+                            { text: "Proteção de acesso da torre", nr: "NR 18" },
+                            { text: "Proteção ao posto do operador", nr: "NR 18" },
+                            { text: "Rampas de acesso", nr: "NR 18" }
+                        ]
+                    }
+                }
+            },
+            "9": {
+                title: "INSTALAÇÕES ELÉTRICAS (NR 18/12)",
+                sections: {
+                    "9.1": {
+                        title: "Instalações Elétricas",
+                        items: [
+                            { text: "Rede elétrica da obra adequada", nr: "NR 18/12" },
+                            { text: "Chave blindada", nr: "NR 18/12" },
+                            { text: "Aterramento elétrico das máquinas", nr: "NR 18/12" },
+                            { text: "Quadro Elétrico", nr: "NR 18/12" }
+                        ]
+                    }
+                }
+            },
+            "10": {
+                title: "DIVERSOS (NR 18)",
+                sections: {
+                    "10.1": {
+                        title: "Diversos",
+                        items: [
+                            { text: "Proteger pontas verticais de vergalhão de aço", nr: "NR 18" },
+                            { text: "Instalações móveis e containers ventilados", nr: "NR 18" },
+                            { text: "Carpintaria com piso e cobertura", nr: "NR 18" },
+                            { text: "Bancada de armação de aço coberta", nr: "NR 18" }
+                        ]
+                    }
+                }
+            },
+            "11": {
+                title: "SINALIZAÇÃO (NR 12/06/18)",
+                sections: {
+                    "11.1": {
+                        title: "Sinalização",
+                        items: [
+                            { text: "Máquinas e Equipamentos", nr: "NR 12/06/18" },
+                            { text: "Uso de EPI's", nr: "NR 12/06/18" },
+                            { text: "Área de Trabalho", nr: "NR 12/06/18" },
+                            { text: "Extintores", nr: "NR 12/06/18" }
+                        ]
+                    }
+                }
+            },
+            "12": {
+                title: "ESCADAS DE MÃO (NR 18)",
+                sections: {
+                    "12.1": {
+                        title: "Escadas de Mão",
+                        items: [
+                            { text: "Madeira de boa qualidade sem emendas, rachaduras ou nós", nr: "NR 18" },
+                            { text: "Fixação adequada", nr: "NR 18" },
+                            { text: "Inclinação adequada", nr: "NR 18" },
+                            { text: "Ultrapassa em 1 metro o piso superior", nr: "NR 18" }
+                        ]
+                    }
+                }
+            },
+            "13": {
+                title: "ESCAVAÇÕES E FUNDAÇÕES (NR 18)",
+                sections: {
+                    "13.1": {
+                        title: "Escavações e Fundações",
+                        items: [
+                            { text: "Muros e paredes das edificações vizinhas escorados", nr: "NR 18" },
+                            { text: "Escavações com mais de 1,25m têm escoramento", nr: "NR 18" },
+                            { text: "Escavações com mais de 1,25m têm escadas e rampas de saída", nr: "NR 18" },
+                            { text: "Escavações possuem isolamento da área", nr: "NR 18" },
+                            { text: "Materiais retirados depositados a distância adequada", nr: "NR 18" }
                         ]
                     }
                 }
@@ -1745,12 +1790,12 @@
             const now = new Date();
             document.getElementById('dataVisita').value = formatDate(now);
             document.getElementById('horaInicio').value = formatTime(now);
-            
+
             // Check mobile
             if (window.innerWidth <= 768) {
                 document.querySelector('.menu-toggle').style.display = 'flex';
             }
-            
+
             // Initialize checklist data structure
             initializeChecklistData();
         }
@@ -1764,7 +1809,7 @@
                         const itemId = `${groupKey}.${sectionKey}.${index}`;
                         vistoriaData.checklist[itemId] = {
                             text: item.text,
-                            type: item.type,
+                            nr: item.nr || '',
                             checked: false,
                             evaluation: null,
                             observation: '',
@@ -1788,44 +1833,6 @@
             return `${hours}:${minutes}`;
         }
 
-        function iniciarVistoria() {
-            // Validate form
-            const requiredFields = [
-                'nomeEmpreendimento', 'numeroVisita', 'engenheiroVistoriador',
-                'empresaConstrutora', 'responsavelTecnico', 'matriculaCEI', 'numeroTrabalhadores'
-            ];
-            
-            for (let field of requiredFields) {
-                const input = document.getElementById(field);
-                if (!input.value.trim()) {
-                    alert('Por favor, preencha todos os campos obrigatórios!');
-                    input.focus();
-                    return;
-                }
-            }
-            
-            // Save initial data
-            vistoriaData.info = {
-                nomeEmpreendimento: document.getElementById('nomeEmpreendimento').value,
-                numeroVisita: document.getElementById('numeroVisita').value,
-                dataVisita: document.getElementById('dataVisita').value,
-                horaInicio: document.getElementById('horaInicio').value,
-                engenheiroVistoriador: document.getElementById('engenheiroVistoriador').value,
-                engenheiroAcompanhante: document.getElementById('engenheiroAcompanhante').value,
-                empresaConstrutora: document.getElementById('empresaConstrutora').value,
-                responsavelTecnico: document.getElementById('responsavelTecnico').value,
-                matriculaCEI: document.getElementById('matriculaCEI').value,
-                numeroTrabalhadores: document.getElementById('numeroTrabalhadores').value
-            };
-            
-            vistoriaData.startTime = new Date();
-            
-            // Build checklist interface
-            buildChecklistInterface();
-            
-            // Switch to checklist screen
-            switchScreen('screen-checklist');
-        }
 
         function buildChecklistInterface() {
             const sidebar = document.getElementById('sidebar');
@@ -1854,7 +1861,18 @@
                 sidebarItem.onclick = () => showGroup(groupKey);
                 sidebar.appendChild(sidebarItem);
             }
-            
+
+            // Add Trabalhadores section
+            const trabalhadorItem = document.createElement('div');
+            trabalhadorItem.className = 'sidebar-item';
+            trabalhadorItem.dataset.group = 'trabalhadores';
+            trabalhadorItem.innerHTML = `
+                <div class="sidebar-item-title">👷 TRABALHADORES NO LOCAL</div>
+                <div class="sidebar-item-count">${vistoriaData.trabalhadores.length} cadastrados</div>
+            `;
+            trabalhadorItem.onclick = () => showTrabalhadores();
+            sidebar.appendChild(trabalhadorItem);
+
             // Show first group
             showGroup('1');
         }
@@ -1928,27 +1946,27 @@
             card.id = `card-${itemId}`;
             
             const data = vistoriaData.checklist[itemId];
-            
-            let evaluationButtons = '';
-            if (item.type === 'conform') {
-                evaluationButtons = `
-                    <div class="evaluation-buttons">
-                        <button class="eval-btn conforme ${data.evaluation === 'Conforme' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'Conforme')">✓ Conforme</button>
-                        <button class="eval-btn nc ${data.evaluation === 'NC' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'NC')">✗ NC</button>
-                    </div>
-                `;
-            } else if (item.type === 'rating') {
-                evaluationButtons = `
-                    <div class="evaluation-buttons">
-                        <button class="eval-btn ${data.evaluation === 'MB' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'MB')">MB</button>
-                        <button class="eval-btn ${data.evaluation === 'B' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'B')">B</button>
-                        <button class="eval-btn ${data.evaluation === 'OK' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'OK')">OK</button>
-                        <button class="eval-btn ${data.evaluation === 'R' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'R')">R</button>
-                        <button class="eval-btn ${data.evaluation === 'MR' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'MR')">MR</button>
-                    </div>
-                `;
+
+            // Sistema de avaliação: S/N/I/N.AP
+            const evaluationButtons = `
+                <div class="evaluation-buttons">
+                    <button class="eval-btn eval-s ${data.evaluation === 'S' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'S')">S</button>
+                    <button class="eval-btn eval-n ${data.evaluation === 'N' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'N')">N</button>
+                    <button class="eval-btn eval-i ${data.evaluation === 'I' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'I')">I</button>
+                    <button class="eval-btn eval-nap ${data.evaluation === 'N.AP' ? 'active' : ''}" onclick="setEvaluation('${itemId}', 'N.AP')">N.AP</button>
+                </div>
+            `;
+
+            // Risk badge based on evaluation
+            let riskBadge = '';
+            if (data.evaluation === 'N') {
+                riskBadge = '<span class="risk-badge risk-critico">⚠ Crítico</span>';
+            } else if (data.evaluation === 'I') {
+                riskBadge = '<span class="risk-badge risk-moderado">⚠ Moderado</span>';
+            } else if (data.evaluation === 'S') {
+                riskBadge = '<span class="risk-badge risk-adequado">✓ Adequado</span>';
             }
-            
+
             card.innerHTML = `
                 <div class="checklist-item-header">
                     <div class="checkbox-container">
@@ -1956,9 +1974,11 @@
                     </div>
                     <div class="checklist-item-text">
                         <strong>${item.text}</strong>
+                        ${item.nr ? `<span style="color: #666; font-size: 0.85em; margin-left: 8px;">(${item.nr})</span>` : ''}
+                        ${riskBadge}
                     </div>
                 </div>
-                
+
                 ${evaluationButtons}
                 
                 <div class="observation-area">
@@ -1984,10 +2004,11 @@
             if (data.checked) {
                 card.classList.add('checked');
             }
-            if (data.evaluation === 'NC' || data.evaluation === 'MR') {
+            // Marcar como não conforme se N ou I
+            if (data.evaluation === 'N' || data.evaluation === 'I') {
                 card.classList.add('non-compliant');
             }
-            
+
             return card;
         }
 
@@ -2020,22 +2041,215 @@
             });
             event.target.classList.add('active');
             
-            // Mark as non-compliant if needed
-            if (value === 'NC' || value === 'MR') {
+            // Mark as non-compliant if needed (N ou I)
+            if (value === 'N' || value === 'I') {
                 card.classList.add('non-compliant');
             } else {
                 card.classList.remove('non-compliant');
             }
-            
+
+            // Update risk badge
+            const itemText = card.querySelector('.checklist-item-text');
+            const existingBadge = itemText.querySelector('.risk-badge');
+            if (existingBadge) existingBadge.remove();
+
+            let newBadge = '';
+            if (value === 'N') {
+                newBadge = '<span class="risk-badge risk-critico">⚠ Crítico</span>';
+            } else if (value === 'I') {
+                newBadge = '<span class="risk-badge risk-moderado">⚠ Moderado</span>';
+            } else if (value === 'S') {
+                newBadge = '<span class="risk-badge risk-adequado">✓ Adequado</span>';
+            }
+            if (newBadge) {
+                itemText.insertAdjacentHTML('beforeend', newBadge);
+            }
+
             // Update checkbox
             card.querySelector('input[type="checkbox"]').checked = true;
-            
+
             updateProgress();
         }
 
         function setObservation(itemId, value) {
             vistoriaData.checklist[itemId].observation = value;
         }
+
+        // ═══════════════════════════════════════════════════════════════
+        // TRABALHADORES NO LOCAL
+        // ═══════════════════════════════════════════════════════════════
+
+        function showTrabalhadores() {
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('[data-group="trabalhadores"]').classList.add('active');
+
+            // Build main content
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = '';
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'section-header';
+            header.innerHTML = `
+                <div class="section-title">👷 Trabalhadores no Local</div>
+                <div class="section-subtitle">Cadastre todos os trabalhadores presentes na obra</div>
+            `;
+            mainContent.appendChild(header);
+
+            // Add button
+            const addButton = document.createElement('button');
+            addButton.className = 'btn btn-primary';
+            addButton.style.marginBottom = '20px';
+            addButton.textContent = '+ Adicionar Trabalhador';
+            addButton.onclick = () => abrirModalTrabalhador();
+            mainContent.appendChild(addButton);
+
+            // Workers table
+            if (vistoriaData.trabalhadores.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.innerHTML = `
+                    <div class="empty-state-icon">👷</div>
+                    <h3>Nenhum trabalhador cadastrado</h3>
+                    <p>Adicione os trabalhadores presentes no local</p>
+                `;
+                mainContent.appendChild(emptyState);
+            } else {
+                const table = document.createElement('div');
+                table.style.overflowX = 'auto';
+                table.innerHTML = `
+                    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--primary-green); color: white;">
+                                <th style="padding: 12px; text-align: left;">#</th>
+                                <th style="padding: 12px; text-align: left;">Nome</th>
+                                <th style="padding: 12px; text-align: left;">Função</th>
+                                <th style="padding: 12px; text-align: left;">Data Admissão</th>
+                                <th style="padding: 12px; text-align: left;">Situação</th>
+                                <th style="padding: 12px; text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${vistoriaData.trabalhadores.map((trab, index) => `
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px;">${index + 1}</td>
+                                    <td style="padding: 12px;"><strong>${trab.nome}</strong></td>
+                                    <td style="padding: 12px;">${trab.funcao}</td>
+                                    <td style="padding: 12px;">${formatarData(trab.dataAdmissao)}</td>
+                                    <td style="padding: 12px;">
+                                        <span style="padding: 4px 8px; background: ${getSituacaoColor(trab.situacao)}; color: white; border-radius: 4px; font-size: 0.85em;">
+                                            ${trab.situacao}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 12px; text-align: center;">
+                                        <button class="btn btn-sm btn-secondary" onclick="editarTrabalhador(${index})" style="margin-right: 5px;">Editar</button>
+                                        <button class="btn btn-sm btn-danger" onclick="excluirTrabalhador(${index})">Excluir</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                mainContent.appendChild(table);
+            }
+        }
+
+        function abrirModalTrabalhador(index = null) {
+            const modal = document.getElementById('modalTrabalhador');
+            const titulo = document.getElementById('modalTrabalhadorTitulo');
+            const form = document.getElementById('formTrabalhador');
+
+            form.reset();
+
+            if (index !== null) {
+                // Editing
+                titulo.textContent = 'Editar Trabalhador';
+                document.getElementById('trabalhadorIndex').value = index;
+                const trab = vistoriaData.trabalhadores[index];
+                document.getElementById('trabalhadorNome').value = trab.nome;
+                document.getElementById('trabalhadorFuncao').value = trab.funcao;
+                document.getElementById('trabalhadorDataAdmissao').value = trab.dataAdmissao;
+                document.getElementById('trabalhadorSituacao').value = trab.situacao;
+            } else {
+                // New
+                titulo.textContent = 'Novo Trabalhador';
+                document.getElementById('trabalhadorIndex').value = '';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function fecharModalTrabalhador() {
+            const modal = document.getElementById('modalTrabalhador');
+            modal.classList.remove('active');
+            document.getElementById('formTrabalhador').reset();
+        }
+
+        function salvarTrabalhador() {
+            const nome = document.getElementById('trabalhadorNome').value.trim();
+            const funcao = document.getElementById('trabalhadorFuncao').value.trim();
+            const dataAdmissao = document.getElementById('trabalhadorDataAdmissao').value;
+            const situacao = document.getElementById('trabalhadorSituacao').value;
+            const index = document.getElementById('trabalhadorIndex').value;
+
+            if (!nome || !funcao || !dataAdmissao || !situacao) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            const trabalhador = { nome, funcao, dataAdmissao, situacao };
+
+            if (index === '') {
+                // New
+                vistoriaData.trabalhadores.push(trabalhador);
+            } else {
+                // Edit
+                vistoriaData.trabalhadores[parseInt(index)] = trabalhador;
+            }
+
+            fecharModalTrabalhador();
+            showTrabalhadores();
+
+            // Update sidebar count
+            document.querySelector('[data-group="trabalhadores"] .sidebar-item-count').textContent =
+                `${vistoriaData.trabalhadores.length} cadastrados`;
+        }
+
+        function editarTrabalhador(index) {
+            abrirModalTrabalhador(index);
+        }
+
+        function excluirTrabalhador(index) {
+            if (confirm('Deseja realmente excluir este trabalhador?')) {
+                vistoriaData.trabalhadores.splice(index, 1);
+                showTrabalhadores();
+
+                // Update sidebar count
+                document.querySelector('[data-group="trabalhadores"] .sidebar-item-count').textContent =
+                    `${vistoriaData.trabalhadores.length} cadastrados`;
+            }
+        }
+
+        function formatarData(dataISO) {
+            if (!dataISO) return '';
+            const [ano, mes, dia] = dataISO.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function getSituacaoColor(situacao) {
+            const colors = {
+                'Registrado': '#027a3e',
+                'Temporário': '#ff9800',
+                'Terceirizado': '#2196f3',
+                'Autônomo': '#9c27b0'
+            };
+            return colors[situacao] || '#666';
+        }
+
+        // ═══════════════════════════════════════════════════════════════
 
         function addPhoto(itemId, input) {
             const file = input.files[0];
@@ -2159,14 +2373,15 @@
                 if (data.checked) {
                     summary.checked++;
                 }
-                
-                if (data.evaluation === 'Conforme' || ['MB', 'B', 'OK'].includes(data.evaluation)) {
+
+                // S = conforme, N/I = não conforme, N.AP = não aplicável
+                if (data.evaluation === 'S') {
                     summary.conforme++;
-                } else if (data.evaluation === 'NC' || data.evaluation === 'MR') {
+                } else if (data.evaluation === 'N' || data.evaluation === 'I') {
                     summary.naoConforme++;
-                    
-                    // Check if critical
-                    if (data.text.includes('INTERDITAR') || data.text.includes('CRÍTICO')) {
+
+                    // Check if critical (N = crítico)
+                    if (data.evaluation === 'N' || data.text.includes('INTERDITAR') || data.text.includes('CRÍTICO')) {
                         summary.critical.push({
                             item: data.text,
                             observation: data.observation,
@@ -2174,7 +2389,7 @@
                         });
                     }
                 }
-                
+
                 // By group
                 const groupKey = itemId.split('.')[0];
                 if (!summary.byGroup[groupKey]) {
@@ -2182,7 +2397,7 @@
                 }
                 summary.byGroup[groupKey].total++;
                 if (data.checked) summary.byGroup[groupKey].checked++;
-                if (data.evaluation === 'Conforme' || ['MB', 'B', 'OK'].includes(data.evaluation)) {
+                if (data.evaluation === 'S') {
                     summary.byGroup[groupKey].conforme++;
                 }
             }
@@ -2392,7 +2607,86 @@
             pdf.text(`Taxa de Conformidade: ${conformityPercentage}%`, margin, yPos);
             pdf.setTextColor(0, 0, 0);
             pdf.setFont(undefined, 'normal');
+            yPos += 12;
+
+            // Legenda do Sistema de Avaliação
+            pdf.setFillColor(240, 248, 255);
+            pdf.rect(margin - 3, yPos - 2, pageWidth - 2 * margin + 6, 24, 'F');
+
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'bold');
+            pdf.setTextColor(2, 58, 15);
+            pdf.text('LEGENDA - Sistema de Avaliação', margin, yPos);
+            yPos += 6;
+
+            pdf.setFontSize(8);
+            pdf.setFont(undefined, 'normal');
+            pdf.setTextColor(0, 0, 0);
+            pdf.text('S = Sim (Conforme) | N = Não (Não Conforme - Crítico) | I = Insuficiente (Não Conforme) | N.AP = Não Aplicável', margin, yPos);
+            yPos += 5;
+            pdf.setTextColor(100, 100, 100);
+            pdf.text('Todas as avaliações seguem o padrão estabelecido para vistorias de segurança do trabalho.', margin, yPos);
+            yPos += 5;
+            pdf.text('Os itens incluem referências às Normas Regulamentadoras (NRs) aplicáveis.', margin, yPos);
+            pdf.setTextColor(0, 0, 0);
             yPos += 10;
+
+
+
+            // Trabalhadores no Local
+            if (vistoriaData.trabalhadores.length > 0) {
+                if (yPos > pageHeight - 80) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'bold');
+                pdf.setTextColor(2, 58, 15);
+                pdf.text('TRABALHADORES NO LOCAL', margin, yPos);
+                yPos += 8;
+
+                pdf.setFontSize(9);
+                pdf.setFont(undefined, 'normal');
+                pdf.setTextColor(0, 0, 0);
+
+                // Table header
+                const colX = [margin, margin + 70, margin + 110, margin + 140];
+                pdf.setFillColor(2, 58, 15);
+                pdf.rect(margin, yPos - 5, pageWidth - 2 * margin, 8, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Nome', colX[0] + 2, yPos);
+                pdf.text('Função', colX[1] + 2, yPos);
+                pdf.text('Admissão', colX[2] + 2, yPos);
+                pdf.text('Situação', colX[3] + 2, yPos);
+                yPos += 8;
+
+                pdf.setTextColor(0, 0, 0);
+                pdf.setFont(undefined, 'normal');
+
+                // Table rows
+                vistoriaData.trabalhadores.forEach((trab, index) => {
+                    if (yPos > pageHeight - 20) {
+                        pdf.addPage();
+                        yPos = 20;
+                    }
+
+                    // Zebra striping
+                    if (index % 2 === 0) {
+                        pdf.setFillColor(245, 245, 245);
+                        pdf.rect(margin, yPos - 4, pageWidth - 2 * margin, 6, 'F');
+                    }
+
+                    pdf.text(trab.nome, colX[0] + 2, yPos);
+                    pdf.text(trab.funcao, colX[1] + 2, yPos);
+                    pdf.text(formatarData(trab.dataAdmissao), colX[2] + 2, yPos);
+                    pdf.text(trab.situacao, colX[3] + 2, yPos);
+                    yPos += 6;
+                });
+
+                yPos += 5;
+            }
 
             // Não Conformidades Críticas
             if (summary.critical.length > 0) {
@@ -2573,18 +2867,29 @@
                                 pdf.setFont(undefined, 'normal');
                                 let evalText = `Avaliação: ${itemData.evaluation}`;
                                 let evalColor = [0, 0, 0];
+                                let evalSymbol = '';
 
-                                // Definir cor baseada na avaliação
-                                if (itemData.evaluation === 'Conforme' || ['MB', 'B', 'OK'].includes(itemData.evaluation)) {
-                                    evalColor = [2, 120, 30];
-                                    evalText += ' ✓';
-                                } else if (itemData.evaluation === 'NC' || ['R', 'MR'].includes(itemData.evaluation)) {
-                                    evalColor = [220, 53, 69];
-                                    evalText += ' ✗';
+                                // Definir cor e símbolo baseado na avaliação
+                                if (itemData.evaluation === 'S') {
+                                    evalColor = [2, 120, 30];  // Verde
+                                    evalSymbol = ' ✓';
+                                    evalText += ' (Sim)';
+                                } else if (itemData.evaluation === 'N') {
+                                    evalColor = [220, 53, 69];  // Vermelho
+                                    evalSymbol = ' ✗';
+                                    evalText += ' (Não)';
+                                } else if (itemData.evaluation === 'I') {
+                                    evalColor = [255, 152, 0];  // Laranja
+                                    evalSymbol = ' ⚠';
+                                    evalText += ' (Insuficiente)';
+                                } else if (itemData.evaluation === 'N.AP') {
+                                    evalColor = [158, 158, 158];  // Cinza
+                                    evalSymbol = ' -';
+                                    evalText += ' (Não Aplicável)';
                                 }
 
                                 pdf.setTextColor(...evalColor);
-                                pdf.text(evalText, margin + 3, yPos);
+                                pdf.text(evalText + evalSymbol, margin + 3, yPos);
                                 pdf.setTextColor(0, 0, 0);
                                 yPos += 5;
                             }
@@ -2977,10 +3282,11 @@
                 const avalAtual = itemAtual.evaluation || '';
                 const avalAnterior = itemAnterior ? (itemAnterior.evaluation || '') : '';
 
-                const isConformeAtual = avalAtual === 'Conforme' || ['MB', 'B', 'OK'].includes(avalAtual);
-                const isConformeAnterior = avalAnterior === 'Conforme' || ['MB', 'B', 'OK'].includes(avalAnterior);
-                const isNCAtual = avalAtual === 'NC' || ['R', 'MR'].includes(avalAtual);
-                const isNCAnterior = avalAnterior === 'NC' || ['R', 'MR'].includes(avalAnterior);
+                // S = conforme, N/I = não conforme
+                const isConformeAtual = avalAtual === 'S';
+                const isConformeAnterior = avalAnterior === 'S';
+                const isNCAtual = avalAtual === 'N' || avalAtual === 'I';
+                const isNCAnterior = avalAnterior === 'N' || avalAnterior === 'I';
 
                 if (isNCAnterior && isConformeAtual) {
                     // Item foi corrigido
@@ -3024,7 +3330,8 @@
                 if (!item.checked) continue;
 
                 const aval = item.evaluation || '';
-                const isNC = aval === 'NC' || ['R', 'MR'].includes(aval);
+                // N e I são não conformes
+                const isNC = aval === 'N' || aval === 'I';
 
                 if (isNC) {
                     pendencias.push({
@@ -3054,11 +3361,12 @@
                 total++;
                 const aval = item.evaluation || '';
 
-                if (aval === 'Conforme' || ['MB', 'B', 'OK'].includes(aval)) {
+                // S = conforme, N/I = não conforme
+                if (aval === 'S') {
                     conformes++;
-                } else if (aval === 'NC' || ['R', 'MR'].includes(aval)) {
+                } else if (aval === 'N' || aval === 'I') {
                     naoConformes++;
-                    if (aval === 'MR') criticos++;
+                    if (aval === 'N') criticos++;  // N é crítico
                 }
             }
 
@@ -3515,9 +3823,8 @@
         // MODIFICAR FUNÇÃO INICIAR VISTORIA
         // ═══════════════════════════════════════════════════════════════
 
-        const iniciarVistoriaOriginal = iniciarVistoria;
-
         function iniciarVistoria() {
+            console.log('iniciarVistoria() - Nova versão chamada');
             // Validar seleção de empreendimento
             if (!empreendimentoSelecionado) {
                 alert('Por favor, selecione um empreendimento antes de iniciar a vistoria.');
@@ -3562,10 +3869,14 @@
 
             vistoriaData.startTime = new Date().toISOString();
 
+            console.log('Dados da vistoria preparados:', vistoriaData);
+            console.log('Chamando buildChecklistInterface()...');
+
             // Ir para o checklist
+            buildChecklistInterface();
             switchScreen('screen-checklist');
-            renderSidebar();
-            renderMainContent('1');
+
+            console.log('Checklist interface construída e tela trocada!');
         }
 
         function voltarMenuComReset() {
