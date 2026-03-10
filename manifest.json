@@ -1,0 +1,22 @@
+{
+  "name": "AM Engenharia - Vistorias",
+  "short_name": "AM Vistoria",
+  "description": "Sistema de Vistoria de Segurança do Trabalho",
+  "start_url": "./AM-Vistoria.html",
+  "display": "standalone",
+  "background_color": "#0d3d1a",
+  "theme_color": "#0d3d1a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://villatorejunior-dot.github.io/AM/WhatsApp Image 2025-11-07 at 09.54.47.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://villatorejunior-dot.github.io/AM/WhatsApp Image 2025-11-07 at 09.54.47.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
